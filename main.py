@@ -2,7 +2,7 @@
 
 import wx
 from srccapt import capture_screen
-from imganaly.sqrdetec import SquareDetector
+from imganaly.sqrdetec import GameSquareDetector
 
 app = wx.App(False)
 screen = wx.ScreenDC()
@@ -11,11 +11,11 @@ size = screen.GetSize()
 print size
 
 tsize = (size[0], size[1])
-imgDC = capture_screen(screen, 0, 0, tsize[0], tsize[1])
-print imgDC
-todo_a = SquareDetector(tsize[0], tsize[1], imgDC, wx.Colour(51, 51, 51, 255))
+dc_img = capture_screen(screen, 0, 0, tsize[0], tsize[1])
+print dc_img
+todo_a = GameSquareDetector(tsize[0], tsize[1], dc_img, wx.Colour(51, 51, 51, 255))
 
-
+del dc_img
 
 ## #print "ouaiche"
 ## wx.App()  # Need to create an App instance before doing anything
