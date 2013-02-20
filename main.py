@@ -1,6 +1,7 @@
 ﻿# -*- coding: utf-8 -*-
 
 import wx
+from log import log
 from srccapt import capture_screen
 from imganaly.sqrdetec import GameSquareDetector
 
@@ -8,11 +9,11 @@ app = wx.App(False)
 screen = wx.ScreenDC()
 size = screen.GetSize()
 
-print size
+log(size)
 
 tsize = (size[0], size[1])
 dc_img = capture_screen(screen, 0, 0, tsize[0], tsize[1])
-print dc_img
+log(dc_img)
 todo_a = GameSquareDetector(tsize[0], tsize[1], dc_img, wx.Colour(51, 51, 51, 255))
 
 del dc_img

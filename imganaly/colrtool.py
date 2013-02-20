@@ -88,6 +88,8 @@ if __name__ == "__main__":
                 # Bordel, voilà pourquoi j'essais d'utiliser ces cons de float le moins possible !
                 hsv_2 = tuple( [ int(float(str(elem))) for elem in hsv_2 ] )
                 if hsv_1 != hsv_2:
+                    # J'utilise print, et pas ma fonction log. Car c'est du test à l'arrache,
+                    # On s'en fout de coder sale, et faut éviter les dépendances à la con.
                     print red, grn, blu
                     print "mine : ", hsv_1
                     print "official : ", hsv_2
