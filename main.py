@@ -14,7 +14,9 @@ log(size)
 tsize = (size[0], size[1])
 dc_img = capture_screen(screen, 0, 0, tsize[0], tsize[1])
 log(dc_img)
-todo_a = GameSquareDetector(tsize[0], tsize[1], dc_img, wx.Colour(51, 51, 51, 255))
+game_square_detector = GameSquareDetector(tsize[0], tsize[1], dc_img)
+todo_a = game_square_detector.detect_pattern_in_line(tsize[1]/2)
+log("result pattern", todo_a)
 
 del dc_img
 
