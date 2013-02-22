@@ -2,7 +2,7 @@
 
 import wx
 from log import log
-from srccapt import capture_screen
+from srccapt import capture_screen, capture_screen_and_save
 from imganaly.sqrdetec import GameSquareDetector
 
 app = wx.App(False)
@@ -15,8 +15,16 @@ tsize = (size[0], size[1])
 dc_img = capture_screen(screen, 0, 0, tsize[0], tsize[1])
 log(dc_img)
 game_square_detector = GameSquareDetector(tsize[0], tsize[1], dc_img)
-todo_a = game_square_detector.detect_pattern_in_line(tsize[1]/2)
-log("result pattern", todo_a)
+if game_square_detector.detect_square():
+    log("detection rectangle du jeu ok")
+    # juste pour vérifier qu'on a bien chopé le rectangle. À enlever après.
+    capture_screen_and_save(
+        screen,
+        game_square_detector.x_square_left,
+        game_square_detector.y_square_up,
+        game_square_detector.x_square_size,
+        game_square_detector.y_square_size)
+
 
 del dc_img
 
