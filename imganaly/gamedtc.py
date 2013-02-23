@@ -8,8 +8,8 @@ PATTERN_SEARCH_STATE = enum(
     "PATTERN_SEARCH_STATE",
     "NOTHING_FOUND",
     "BEFORE_LEFT_BORDER",
-    "IN_SQUARE_COLOR_OK",
-    "IN_SQUARE_COLOR_NO",
+    "IN_game_COLOR_OK",
+    "IN_game_COLOR_NO",
     "RIGHT_LIT_PIXEL",
     "AFTER_RIGHT_BORDER",
 )
@@ -38,29 +38,29 @@ class GameRectDetector():
         self.size_x_img = size_x_img
         self.size_y_img = size_y_img
         self.y_first_pattern = None
-        self.x_square_left = None
-        self.x_square_right = None
-        self.y_square_up = None
-        self.y_square_bottom = None
-        self.x_square_size = None
-        self.y_square_size = None
+        self.x_game_left = None
+        self.x_game_right = None
+        self.y_game_top = None
+        self.y_game_bottom = None
+        self.x_game_size = None
+        self.y_game_size = None
         self.square_detected = False
         
     def detect_square(self):
         if not self.find_first_line_pattern():
             log("first line pattern fail")
             return False
-        self.y_square_up = self.detect_line_pattern_limit(-1)
-        self.y_square_bottom = self.detect_line_pattern_limit(+1)
-        self.x_square_size = self.x_square_right - self.x_square_left
-        self.y_square_size = self.y_square_bottom - self.y_square_up
-        log("size x", self.x_square_size, "size y", self.y_square_size)
-        proportion = float(self.x_square_size) / self.y_square_size
+        self.y_game_top = self.detect_line_pattern_limit(-1)
+        self.y_game_bottom = self.detect_line_pattern_limit(+1)
+        self.x_game_size = self.x_game_right - self.x_game_left
+        self.y_game_size = self.y_game_bottom - self.y_game_top
+        log("size x", self.x_game_size, "size y", self.y_game_size)
+        proportion = float(self.x_game_size) / self.y_game_size
         log("proportion", proportion)
         if abs(proportion - self.PROPORTIONS) > self.PROPORTIONS_MARGIN:
             log("proportion fail")
             return False
-        if not self.check_square_border_colors():
+        if not self.check_game_border_colors():
             log("check square border fail")
             return False
         self.square_detected = True
@@ -73,14 +73,14 @@ class GameRectDetector():
         if not self.square_detected:
             return None
         x_depl_rez_left = int(self.x_game_size * self.RATIO_X_REZ_LEFT)
-        x_scr_rez_left = x_game_left + x_depl_rez_left
+        x_scr_rez_left = self.x_game_left + x_depl_rez_left
         x_depl_rez_right = int(self.x_game_size * self.RATIO_X_REZ_RIGHT)
-        x_scr_rez_right = x_game_left + x_depl_rez_right
+        x_scr_rez_right = self.x_game_left + x_depl_rez_right
             
         y_depl_rez_top = int(self.y_game_size * self.RATIO_Y_REZ_TOP)
-        y_scr_rez_top = y_game_top + y_depl_rez_top
+        y_scr_rez_top = self.y_game_top + y_depl_rez_top
         y_depl_rez_bottom = int(self.y_game_size * self.RATIO_Y_REZ_BOTTOM)
-        y_scr_rez_bottom = y_game_top + y_depl_rez_bottom
+        y_scr_rez_bottom = self.y_game_top + y_depl_rez_bottom
         
         x_rez_size = x_scr_rez_right - x_scr_rez_left
         y_rez_size = y_scr_rez_bottom - y_scr_rez_top
@@ -122,12 +122,12 @@ class GameRectDetector():
                     
             elif pss_cur == pss.BEFORE_LEFT_BORDER:
                 if rgb_cur == self.RGB_EXACT_INSIDE_SQUARE:
-                    pss_cur = pss.IN_SQUARE_COLOR_OK
+                    pss_cur = pss.IN_game_COLOR_OK
                     x_pattern_start = x_cur
                 elif not self.is_approx_extern_border(rgb_cur):
                     pss_cur = pss.NOTHING_FOUND
                     
-            elif pss_cur == pss.IN_SQUARE_COLOR_OK:
+            elif pss_cur == pss.IN_game_COLOR_OK:
                 if rgb_cur == self.RGB_EXACT_RIGHT_LIT_PIXEL:
                     pss_cur = pss.RIGHT_LIT_PIXEL
                     x_pattern_end = x_cur - 1
@@ -135,11 +135,11 @@ class GameRectDetector():
                     pss_cur = pss.AFTER_RIGHT_BORDER
                     x_pattern_end = x_cur - 1
                 elif rgb_cur != self.RGB_EXACT_INSIDE_SQUARE:        
-                    pss_cur = pss.IN_SQUARE_COLOR_NO
+                    pss_cur = pss.IN_game_COLOR_NO
                 
-            elif pss_cur == pss.IN_SQUARE_COLOR_NO:
+            elif pss_cur == pss.IN_game_COLOR_NO:
                 if rgb_cur == self.RGB_EXACT_INSIDE_SQUARE:
-                    pss_cur = pss.IN_SQUARE_COLOR_OK
+                    pss_cur = pss.IN_game_COLOR_OK
                 
             elif pss_cur == pss.RIGHT_LIT_PIXEL:
                 if self.is_approx_extern_border(rgb_cur):
@@ -155,18 +155,18 @@ class GameRectDetector():
     def check_pattern(self, y):
         if y < 0 or y > self.size_y_img:
             return False
-        if self.x_square_left is None or self.x_square_right is None:
+        if self.x_game_left is None or self.x_game_right is None:
             return False
-        rgb_before = self.get_pixel(self.x_square_left - 1, y)
+        rgb_before = self.get_pixel(self.x_game_left - 1, y)
         if not self.is_approx_extern_border(rgb_before):
             return False
-        rgb_left = self.get_pixel(self.x_square_left, y)
+        rgb_left = self.get_pixel(self.x_game_left, y)
         if rgb_left != self.RGB_EXACT_INSIDE_SQUARE:
             return False
-        rgb_right = self.get_pixel(self.x_square_right, y)
+        rgb_right = self.get_pixel(self.x_game_right, y)
         if rgb_right != self.RGB_EXACT_INSIDE_SQUARE:
             return False
-        x_cursor = self.x_square_right
+        x_cursor = self.x_game_right
         in_right_lit_pix = True
         while in_right_lit_pix:
             x_cursor += 1
@@ -185,7 +185,7 @@ class GameRectDetector():
                 detect_result = self.detect_line_pattern(y_cursor)
                 log("detect pattern:", y_cursor, "result:", detect_result)
                 if detect_result is not None:
-                    (self.x_square_left, self.x_square_right) = detect_result
+                    (self.x_game_left, self.x_game_right) = detect_result
                     self.y_first_pattern = y_cursor
                     return True
                 y_cursor += y_step
@@ -217,27 +217,27 @@ class GameRectDetector():
         log("pattern last :", y_last_pattern)
         return y_last_pattern
         
-    def check_square_line_colors(self, y_line):
+    def check_game_line_colors(self, y_line):
         return all( [ 
             self.get_pixel(x, y_line) == self.RGB_EXACT_INSIDE_SQUARE
-            for x in range(self.x_square_left, self.x_square_right+1) ] )
+            for x in range(self.x_game_left, self.x_game_right+1) ] )
 
-    def check_square_column_colors(self, x_column):
+    def check_game_column_colors(self, x_column):
         return all( [ 
             self.get_pixel(x_column, y) == self.RGB_EXACT_INSIDE_SQUARE
-            for y in range(self.y_square_up, self.y_square_bottom+1) ] )
+            for y in range(self.y_game_top, self.y_game_bottom+1) ] )
             
-    def check_square_border_colors(self):
-        if (self.x_square_left is None or 
-            self.x_square_right is None or 
-            self.y_square_bottom is None or 
-            self.y_square_up is None
+    def check_game_border_colors(self):
+        if (self.x_game_left is None or 
+            self.x_game_right is None or 
+            self.y_game_bottom is None or 
+            self.y_game_top is None
            ):
             return False
-        if (not self.check_square_line_colors(self.y_square_up) or
-            not self.check_square_line_colors(self.y_square_bottom) or
-            not self.check_square_column_colors(self.x_square_left) or
-            not self.check_square_column_colors(self.x_square_right)
+        if (not self.check_game_line_colors(self.y_game_top) or
+            not self.check_game_line_colors(self.y_game_bottom) or
+            not self.check_game_column_colors(self.x_game_left) or
+            not self.check_game_column_colors(self.x_game_right)
         ):
             return False
         return True

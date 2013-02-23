@@ -24,10 +24,10 @@ log("detection rectangle du jeu ok")
 # juste pour vérifier qu'on a bien chopé le rectangle. À enlever après.
 capture_screen_and_save(
     screen,
-    game_square_detector.x_square_left,
-    game_square_detector.y_square_up,
-    game_square_detector.x_square_size,
-    game_square_detector.y_square_size,
+    game_square_detector.x_game_left,
+    game_square_detector.y_game_top,
+    game_square_detector.x_game_size,
+    game_square_detector.y_game_size,
     "J:\\Recher\\infos_jeux_videos\\anti-idle\\screenshot.png")
         
 rect_rez = game_square_detector.get_rect_raw_enigma_zone()
@@ -46,6 +46,17 @@ capture_screen_and_save(
     screen,
     x_scr_rez_left, y_scr_rez_top, x_rez_size, y_rez_size,
     "J:\\Recher\\infos_jeux_videos\\anti-idle\\screenshot_rez.png")    
+    
+y_proc_ez_top = enigma_zone_detector.y_proc_ez_top
+y_scr_ez_top = y_scr_rez_top + y_proc_ez_top
+y_size_ez = enigma_zone_detector.y_size_proc_ez
+x_scr_ez_left = x_scr_rez_left
+x_size_ez = x_rez_size
+    
+capture_screen_and_save(
+    screen,
+    x_scr_ez_left, y_scr_ez_top, x_size_ez, y_size_ez,
+    "J:\\Recher\\infos_jeux_videos\\anti-idle\\screenshot_ez.png")        
     
 del dc_raw_enigma_zone
 
