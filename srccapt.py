@@ -20,14 +20,13 @@ def capture_screen(
     
 def capture_screen_and_save(
     screen, 
-    x_screen, 
-    y_screen, 
-    size_x_screen, 
-    size_y_screen
+    x_screen, y_screen, 
+    size_x_screen, size_y_screen,
+    path_save
 ):
     bmp = wx.EmptyBitmap(size_x_screen, size_y_screen)
     mem = wx.MemoryDC(bmp)
     mem.Blit(0, 0, size_x_screen, size_y_screen, screen, x_screen, y_screen)
-    bmp.SaveFile('screenshot.png', wx.BITMAP_TYPE_PNG)
+    bmp.SaveFile(path_save, wx.BITMAP_TYPE_PNG)
     del mem
     

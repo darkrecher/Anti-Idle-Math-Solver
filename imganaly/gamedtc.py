@@ -26,8 +26,13 @@ class GameRectDetector():
     RGB_EXACT_RIGHT_LIT_PIXEL = (102, 102, 102)
     STEP_Y_MIN_LIMIT_SEARCH_FIRST_PATTERN = 50
     PROPORTIONS = 1.5370370
-    PROPORTIONS_MARGIN = 0.1
-
+    PROPORTIONS_MARGIN = 0.1    
+    # REZ = Raw Enigma Zone
+    RATIO_Y_REZ_TOP = 0.222222222   
+    RATIO_Y_REZ_BOTTOM = 0.339506
+    RATIO_X_REZ_LEFT = 0.05
+    RATIO_X_REZ_RIGHT = 0.95
+    
     def __init__(self, size_x_img, size_y_img, dc_img):
         self.dc_img = dc_img
         self.size_x_img = size_x_img
@@ -58,8 +63,30 @@ class GameRectDetector():
         if not self.check_square_border_colors():
             log("check square border fail")
             return False
+        self.square_detected = True
         return True
         
+    def get_rect_raw_enigma_zone(self):
+        # rectangle de jeu : 498 * 324
+        # zone "brute" de l'énigme (avec marge) : 
+        # x = -5% de chaque côté. y1 = 72, y2 = 110.
+        if not self.square_detected:
+            return None
+        x_depl_rez_left = int(self.x_game_size * self.RATIO_X_REZ_LEFT)
+        x_scr_rez_left = x_game_left + x_depl_rez_left
+        x_depl_rez_right = int(self.x_game_size * self.RATIO_X_REZ_RIGHT)
+        x_scr_rez_right = x_game_left + x_depl_rez_right
+            
+        y_depl_rez_top = int(self.y_game_size * self.RATIO_Y_REZ_TOP)
+        y_scr_rez_top = y_game_top + y_depl_rez_top
+        y_depl_rez_bottom = int(self.y_game_size * self.RATIO_Y_REZ_BOTTOM)
+        y_scr_rez_bottom = y_game_top + y_depl_rez_bottom
+        
+        x_rez_size = x_scr_rez_right - x_scr_rez_left
+        y_rez_size = y_scr_rez_bottom - y_scr_rez_top
+        return (x_scr_rez_left, y_scr_rez_top, x_rez_size, y_rez_size)
+    
+    # TODO : underscore au début des fonctions, pour les suivantes, jusqu'à la fin.
     def get_pixel(self, x, y):
         return self.dc_img.GetPixel(x, y)[0:3]
         
