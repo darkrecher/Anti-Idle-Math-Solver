@@ -16,8 +16,8 @@ PATTERN_SEARCH_STATE = enum(
 
 pss = PATTERN_SEARCH_STATE
 
-class GameSquareDetector():
-    """ Ouais bon c'est pas un square, c'est un rect. Je me suis planté, osef.
+class GameRectDetector():
+    """ 
     """
     HSV_APPROX_EXTERN_BORDER = (32, 27, 23)
     # TRIP: 51 je t'aimeu, j'en boirais des tonneaux, 
