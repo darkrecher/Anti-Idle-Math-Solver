@@ -88,11 +88,16 @@ def main():
     list_symbols_after = [ 
         Symbol(raw_symbol=raw_symbol) 
         for raw_symbol in list_raw_symbols_after ]
-    enigma_ocr.ocr_ify_enigma(
+    is_enigma_solvable = enigma_ocr.ocr_ify_enigma(
         list_symbols_before, 
         rgb_big_op, 
         list_symbols_after)
-    log(enigma_ocr.enigma_text)
+    msg(enigma_ocr.enigma_text)
+    if not is_enigma_solvable:
+        enigma_text_help = raw_input(
+            "Saisissez la question posee par le jeu : ")
+        enigma_ocr.record_enigma_text_complete(enigma_text_help)
+    enigma_ocr.symbole_references.msg_newly_added_symbols()
 
     
 if __name__ == "__main__":
