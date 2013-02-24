@@ -83,15 +83,16 @@ def main():
     rgb_big_op = symbole_extractor.rgb_big_op
     list_raw_symbols_after = symbole_extractor.list_raw_symbols_after
     list_symbols_before = [ 
-        Symbol(raw_symbol) 
+        Symbol(raw_symbol=raw_symbol) 
         for raw_symbol in list_raw_symbols_before ]
     list_symbols_after = [ 
-        Symbol(raw_symbol) 
+        Symbol(raw_symbol=raw_symbol) 
         for raw_symbol in list_raw_symbols_after ]
-    enigma_ocr.ocrify_enigma(
+    enigma_ocr.ocr_ify_enigma(
         list_symbols_before, 
         rgb_big_op, 
         list_symbols_after)
+    log(enigma_ocr.enigma_text)
 
     
 if __name__ == "__main__":
