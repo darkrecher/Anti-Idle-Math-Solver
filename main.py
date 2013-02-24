@@ -7,6 +7,8 @@ from srccapt import capture_screen, capture_screen_and_save
 from imganaly.gamedtc import GameRectDetector
 from imganaly.enizodtc import EnigmaZoneDetector
 from imganaly.symbextr import SymbolExtractor
+from imganaly.symbol import Symbol
+from imganaly.eniocr import EnigmaOcr
 
 
 def main():
@@ -73,8 +75,23 @@ def main():
     del dc_raw_enigma_zone
     
     symbole_extractor = SymbolExtractor()
+    enigma_ocr = EnigmaOcr()
+    
     dc_enigma_zone = capture_screen(screen, x_scr_ez_left, y_scr_ez_top, x_size_ez, y_size_ez)
-    symbole_extractor.extract_symbols_data(dc_enigma_zone, x_size_ez, y_size_ez)
+    symbole_extractor.extract_symbols_data(dc_enigma_zone, x_size_ez, y_size_ez)    
+    list_raw_symbols_before = symbole_extractor.list_raw_symbols_before
+    rgb_big_op = symbole_extractor.rgb_big_op
+    list_raw_symbols_after = symbole_extractor.list_raw_symbols_after
+    list_symbols_before = [ 
+        Symbol(raw_symbol) 
+        for raw_symbol in list_raw_symbols_before ]
+    list_symbols_after = [ 
+        Symbol(raw_symbol) 
+        for raw_symbol in list_raw_symbols_after ]
+    enigma_ocr.ocrify_enigma(
+        list_symbols_before, 
+        rgb_big_op, 
+        list_symbols_after)
 
     
 if __name__ == "__main__":
