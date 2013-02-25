@@ -10,10 +10,11 @@ from imganaly.symbextr import SymbolExtractor
 from imganaly.symbol import Symbol
 from imganaly.eniocr import EnigmaOcr
 
-
 def main():
 
     TIME_REFRESH_SECONDS = 0.25
+    # TODO : factoriser ça
+    RGB_EXACT_ENIGMA_ZONE = (0, 0, 102)
 
     app = wx.App(False)
     screen = wx.ScreenDC()
@@ -76,30 +77,59 @@ def main():
     
     symbole_extractor = SymbolExtractor()
     enigma_ocr = EnigmaOcr()
-    
-    dc_enigma_zone = capture_screen(screen, x_scr_ez_left, y_scr_ez_top, x_size_ez, y_size_ez)
-    symbole_extractor.extract_symbols_data(dc_enigma_zone, x_size_ez, y_size_ez)    
-    list_raw_symbols_before = symbole_extractor.list_raw_symbols_before
-    rgb_big_op = symbole_extractor.rgb_big_op
-    list_raw_symbols_after = symbole_extractor.list_raw_symbols_after
-    list_symbols_before = [ 
-        Symbol(raw_symbol=raw_symbol) 
-        for raw_symbol in list_raw_symbols_before ]
-    list_symbols_after = [ 
-        Symbol(raw_symbol=raw_symbol) 
-        for raw_symbol in list_raw_symbols_after ]
-    is_enigma_solvable = enigma_ocr.ocr_ify_enigma(
-        list_symbols_before, 
-        rgb_big_op, 
-        list_symbols_after)
-    msg(enigma_ocr.enigma_text)
-    if not is_enigma_solvable:
-        enigma_text_help = raw_input(
-            "Saisissez la question posee par le jeu : ")
-        enigma_ocr.record_enigma_text_complete(enigma_text_help)
-    enigma_ocr.symbole_references.msg_newly_added_symbols()
+    dc_enigma_zone = capture_screen(
+        screen, 
+        x_scr_ez_left, y_scr_ez_top, x_size_ez, y_size_ez)
+        
+    while True:            
+        symbole_extractor.extract_symbols_data(
+            dc_enigma_zone, x_size_ez, y_size_ez)    
+        list_raw_symbols_before = symbole_extractor.list_raw_symbols_before
+        rgb_big_op = symbole_extractor.rgb_big_op
+        list_raw_symbols_after = symbole_extractor.list_raw_symbols_after
+        list_symbols_before = [ 
+            Symbol(raw_symbol=raw_symbol) 
+            for raw_symbol in list_raw_symbols_before ]
+        list_symbols_after = [ 
+            Symbol(raw_symbol=raw_symbol) 
+            for raw_symbol in list_raw_symbols_after ]
+        is_enigma_solvable = enigma_ocr.ocr_ify_enigma(
+            list_symbols_before, 
+            rgb_big_op, 
+            list_symbols_after)
+        msg(enigma_ocr.enigma_text)
+        if not is_enigma_solvable:
+            enigma_text_help = raw_input(
+                "Saisissez la question posee par le jeu : ")
+            enigma_ocr.record_enigma_text_complete(enigma_text_help)
+            # réinterpreation de l'énigme, avec les nouveaux symboles acquis.
+            # Y'aurait sûrement moins bourrin que de tout recalculer. osef.
+            is_enigma_solvable = enigma_ocr.ocr_ify_enigma(
+                list_symbols_before, 
+                rgb_big_op, 
+                list_symbols_after)
+            msg(enigma_ocr.enigma_text)
+            
+        # TODO : résoudre l'énigme et balancer la réponse.
+        
+        dc_is_the_same = True
+        while dc_is_the_same:
+            time.sleep(TIME_REFRESH_SECONDS)
+            dc_refreshed = capture_screen(
+                screen, 
+                x_scr_ez_left, y_scr_ez_top, x_size_ez, y_size_ez)
+            # TODO : une fonction, voire une classe, pour ça.
+            rgb_bottom_left = dc_refreshed.GetPixel(0, y_size_ez-1)[0:3]
+            if rgb_bottom_left != RGB_EXACT_ENIGMA_ZONE:
+                msg("Il semblerait que le jeu soit fini.")
+                enigma_ocr.symbole_references.msg_newly_added_symbols()
+                return True
+            dc_is_the_same = not symbole_extractor.is_new_image(dc_refreshed)
+            
+        del dc_enigma_zone
+        dc_enigma_zone = dc_refreshed
 
-    
+        
 if __name__ == "__main__":
     if main():
         raise SystemExit(0)
