@@ -9,6 +9,7 @@ from imganaly.enizodtc import EnigmaZoneDetector
 from imganaly.symbextr import SymbolExtractor
 from imganaly.symbol import Symbol
 from imganaly.eniocr import EnigmaOcr
+from enisolvr.enisolvr import EnigmaSolver
 
 def main():
 
@@ -80,6 +81,7 @@ def main():
     dc_enigma_zone = capture_screen(
         screen, 
         x_scr_ez_left, y_scr_ez_top, x_size_ez, y_size_ez)
+    enigma_solver = EnigmaSolver()
         
     while True:            
         symbole_extractor.extract_symbols_data(
@@ -110,7 +112,14 @@ def main():
                 list_symbols_after)
             msg(enigma_ocr.enigma_text)
             
-        # TODO : résoudre l'énigme et balancer la réponse.
+        answer = enigma_solver.solve(enigma_ocr.enigma_text)
+        # TODO : une classe qui écrit le texte de la réponse en très gros.
+        if answer is None:
+            msg("resolution de l'enigme : fail")
+        else:
+            # je met 15 espaces pour que la réponse ressorte bien, 
+            # dans la console.
+            msg("YEAH. la reponse est :", " "*15, answer)
         
         dc_is_the_same = True
         while dc_is_the_same:
@@ -118,7 +127,8 @@ def main():
             dc_refreshed = capture_screen(
                 screen, 
                 x_scr_ez_left, y_scr_ez_top, x_size_ez, y_size_ez)
-            # TODO : une fonction, voire une classe, pour ça.
+            # TODO : une fonction, voire une classe, pour ça. 
+            # (vérifier que le jeu est fini ou pas)
             rgb_bottom_left = dc_refreshed.GetPixel(0, y_size_ez-1)[0:3]
             if rgb_bottom_left != RGB_EXACT_ENIGMA_ZONE:
                 msg("Il semblerait que le jeu soit fini.")
