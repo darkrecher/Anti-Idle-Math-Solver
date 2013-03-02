@@ -4,7 +4,7 @@ Ceci est un espèce de script pour avoir des gros scores au sous-jeu "Math Maste
 
 Le jeu Math Master se présente comme ceci :
 
-![My screenshot](darkrecher.github.com/Anti-Idle-Math-Solver/doc_img_readme/screenshot-example.png)
+![My screenshot](https://github.com/darkrecher/Anti-Idle-Math-Solver/blob/master/doc_img_readme/screenshot-example.png)
 
 Vous avez une minute pour répondre à des questions existentielles telles que "est-ce que 123/3 est plus grand, plus petit ou égal à 30+5 ?".
 
