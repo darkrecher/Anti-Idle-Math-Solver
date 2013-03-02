@@ -54,7 +54,7 @@ Ceci étant dit, place aux étapes :
  
 ![Example question](https://raw.github.com/darkrecher/Anti-Idle-Math-Solver/master/doc_img_readme/screenshot-question.png)
  
- - Vous verrez apparaître dans la console le texte : " *!!/!!! Saisissez la question posee par le jeu : * ". Cela signifie que le script a repéré 2 symboles inconnus (représenté par les points d'exclamation), puis le signe "/", puis 3 symboles inconnus. Saisissez le texte "98/7=?" dans la console. Le script vous donnera la réponse, que vous pourrez alors sélectionner dans le jeu.
+ - Vous verrez apparaître dans la console le texte : " *!!/!!! Saisissez la question posee par le jeu :* ". Cela signifie que le script a repéré 2 symboles inconnus (représenté par les points d'exclamation), puis le signe "/", puis 3 symboles inconnus. Saisissez le texte "98/7=?" dans la console. Le script vous donnera la réponse, que vous pourrez alors sélectionner dans le jeu.
  
  - Faites la même chose pour les questions suivantes. (Oui c'est chiant).
  
