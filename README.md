@@ -40,11 +40,11 @@ Ceci étant dit, place aux étapes :
  
  - Assurez-vous que la zone grise du jeu est entièrement visible à l'écran, et qu'il y a un peu de pixel marron-bois sur les bords. Il faut qu'on voit ça en entier :
  
- (img)
+![Intro jeu](https://raw.github.com/darkrecher/Anti-Idle-Math-Solver/master/doc_img_readme/screenshot-intro.png)
  
  - Ouvrez une console et lancez le script : *python main.py*
  
- - Attendez un peu. La console va blablater quelques trucs, puis répéter le message : "*en attente. tralala.*"
+ - Attendez un peu. La console va blablater quelques trucs, puis répéter le message : " *en attente. tralala.* "
 
  - À partir de maintenant, il ne faut plus bouger le navigateur internet, ni scroller la fenêtre afichant le jeu. Sinon le script ne retrouvera plus sa position.
  
@@ -52,9 +52,9 @@ Ceci étant dit, place aux étapes :
  
  - Dès la première question, le script devrait avoir repéré les caractères. Mais il ne connait pas leur signification. Vous devez lui indiquer vous-même. Par exemple, si le jeu pose la question suivante :
  
- (img)
+![Example question](https://raw.github.com/darkrecher/Anti-Idle-Math-Solver/master/doc_img_readme/screenshot-question.png)
  
- - Vous verrez apparaître dans la console le texte : "*!!/!!! Saisissez la question posee par le jeu : *". Cela signifie que le script a repéré 2 symboles inconnus (représenté par les points d'exclamation), puis le signe "/", puis 3 symboles inconnus. Saisissez le texte "98/7=?" dans la console. Le script vous donnera la réponse, que vous pourrez alors sélectionner dans le jeu.
+ - Vous verrez apparaître dans la console le texte : " *!!/!!! Saisissez la question posee par le jeu : * ". Cela signifie que le script a repéré 2 symboles inconnus (représenté par les points d'exclamation), puis le signe "/", puis 3 symboles inconnus. Saisissez le texte "98/7=?" dans la console. Le script vous donnera la réponse, que vous pourrez alors sélectionner dans le jeu.
  
  - Faites la même chose pour les questions suivantes. (Oui c'est chiant).
  
