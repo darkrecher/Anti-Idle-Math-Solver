@@ -24,6 +24,8 @@ Le script ne clique de lui-même sur la bonne réponse. Ceci pour plusieurs rais
 
 **Avertissement :** c'est du "Chez moi, ça marche." J'ai codé ça vite fait, sans prendre le temps de le mettre à la portée des gens ayant des difficultés à patauger dans le monde fabuleux de l'informatique. Je n'ai pas l'intention d'y apporter une quelconque amélioration, sauf demande expresse accompagnée d'argent ou de chocolat.
 
+Le script est censé fonctionner quel que soit la résolution de votre écran, si vous en avez plusieurs, etc... Mais je n'ai pas testé. "Chez moi ça marche", j'ai un seul écran, en 1280*720.
+
 De plus, la reconnaissance de caractères est faite à la bourrine. Il faut indiquer et sauvegarder manuellement les symboles durant les premières exécutions du script.
 
 Ceci étant dit, place aux étapes :
@@ -34,7 +36,7 @@ Ceci étant dit, place aux étapes :
 
  - Copiez tout le repository quelque part sur votre disque.
 
- - Si vous avez la chance d'avoir la même résolution d'écran que moi (1280*720), vous pourrez peut-être profiter des définitions de symboles que je me suis enregistrées. Sinon il faudra les faire vous même. Pour supprimer les définitions existantes, éditer le fichier symbdata.py, et effacer tout le contenu du tuple "LIST_SYMB_ALARRACHE". Le tuple doit toujous être présent, mais vide.
+ - Si vous avez la chance d'avoir la même résolution d'écran que moi, vous pourrez peut-être profiter des définitions de symboles que je me suis enregistrées. Sinon il faudra les faire vous même. Pour supprimer les définitions existantes, éditer le fichier symbdata.py, et effacer tout le contenu du tuple "LIST_SYMB_ALARRACHE". Le tuple doit toujous être présent, mais vide.
  
  - Lancez Anti-Idle, mettez-vous en Ranked Mode et allez à l'écran d'intro de Math Master. Le script ne marche pas en Unranked Mode (les couleurs du jeu ne sont pas tout à fait les mêmes, et j'avais la flemme de gérer les deux modes).
  
@@ -70,7 +72,7 @@ Ceci étant dit, place aux étapes :
  
  - Certains caractères devront être indiqués et sauvegardés plusieurs fois, car le jeu a plusieurs façons de les écrire. Dès qu'un micro-poil de cul de pixel change, le script ne reconnaît pas le symbole et vous le redemande. 
  
- - Au bout d'un moment, on finit par y arriver. Avec les questions pour lesquelles le script reconnaît tous les symboles, la réponse est immédatement affiché dans la console. Cette réponse peut être une valeur numérique, un opérateur / * - +, ou un signe de comparaison < = >. C'est à vous de cliquer sur le bouton correspondant dans le jeu.
+ - Au bout d'un moment, on finit par y arriver. Lorsque le jeu pose une question, dont tous les symboles sont reconnus par le script, la réponse s'affiche immédiatement dans la console. Cette réponse peut être une valeur numérique, un opérateur / * - +, ou un signe de comparaison < = >. C'est à vous de cliquer sur le bouton correspondant dans le jeu.
  
  
 Voilà, bon courage et amusez-vous bien ! Et si quelqu'un connaît un bon deck de TukkunFCG pour battre les bots de niveau 7, je suis preneur.

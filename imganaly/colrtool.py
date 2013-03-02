@@ -83,9 +83,9 @@ if __name__ == "__main__":
             for blu in range(256):
                 hsv_1 = hsv_from_rgb(red, grn, blu)
                 hsv_2 = hsv_from_rgb_crap(red, grn, blu)
-                # conversion super dégueux. C'est le seul moyen que j'ai trouvé pour que
+                # TODO : conversion super dégueux. C'est le seul moyen que j'ai trouvé pour que
                 # des conneries genre 89.99999999 se changent bien en 90, et non pas 89.
-                # Bordel, voilà pourquoi j'essais d'utiliser ces cons de float le moins possible !
+                # Bordel, voilà pourquoi j'essaie d'utiliser ces cons de float le moins possible !
                 hsv_2 = tuple( [ int(float(str(elem))) for elem in hsv_2 ] )
                 if hsv_1 != hsv_2:
                     # J'utilise print, et pas ma fonction log. Car c'est du test à l'arrache,

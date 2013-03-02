@@ -46,7 +46,7 @@ class GameRectDetector():
         self.y_game_size = None
         self.square_detected = False
         
-    def detect_square(self):
+    def detect_rect(self):
         if not self.find_first_line_pattern():
             log("first line pattern fail")
             return False
@@ -241,7 +241,5 @@ class GameRectDetector():
         ):
             return False
         return True
-        
-    #def detect_top_and_bottom_line_pattern(self):
-    
+            
     
