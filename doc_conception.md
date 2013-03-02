@@ -25,7 +25,7 @@ La "zone de jeu" représente le rectangle affichant Math Master. Il ne s'agit pas
 Exemple de zone de jeu : 
 ![Intro jeu](https://raw.github.com/darkrecher/Anti-Idle-Math-Solver/master/doc_img_readme/screenshot-intro.png)
 
-Cette action est réalisée par la classe ´GameRectDetector´, du fichier ´gamedtc.py´
+Cette action est réalisée par la classe `GameRectDetector`, du fichier `gamedtc.py`
 
 ### Estimation de la zone d'énigme brute ###
 
