@@ -74,7 +74,20 @@ Ceci étant dit, place aux étapes :
  
  - Au bout d'un moment, on finit par y arriver. Lorsque le jeu pose une question, dont tous les symboles sont reconnus par le script, la réponse s'affiche immédiatement dans la console. Cette réponse peut être une valeur numérique, un opérateur / * - +, ou un signe de comparaison < = >. C'est à vous de cliquer sur le bouton correspondant dans le jeu.
  
+# Bug connu : blocage sur la question en cours suite à un échec #
+
+Dans les deux cas suivants :
+
+ - Le script n'a pas réussi à reconnaître tous les symboles d'une énigme, a demandé une saisie à l'utilisateur, et l'utilisateur a saisi des conneries.
  
-Voilà, bon courage et amusez-vous bien ! Et si quelqu'un connaît un bon deck de TukkunFCG pour battre les bots de niveau 7, je suis preneur.
+ - Le script a reconnu tous les symboles, mais ça a donné une énigme qui n'a pas de sens. Cela peut arriver si les définitions de symboles sont incorrectes, par exemple, le dessin d'un "5" est identifié comme le caractère "/".
+ 
+Dans ce cas, le script indique en sortie : "resolution de l'enigme : fail", et reste bloqué. Il ne demande pas de nouvelle saisie à l'utilisateur. Pour débloquer, l'utilisateur doit trouver la réponse à l'énigme en cours, avec son propre cerveau. Lorsque la nouvelle énigme s'affiche à l'écran, le script se débloque et reprend le traitement des énigmes comme si de rien n'était.
+
+# Voili voilà #
+
+Pour une description détaillée du code et des algorithmes, méthodes, et bidouillages employés, se référer au fichier doc_conception.md de ce repository.
+
+Bon courage et amusez-vous bien ! Et si quelqu'un connaît un bon deck de TukkunFCG pour battre les bots de niveau 7, je suis preneur.
 
 Le code et cette doc sont sous licence Creative Commons CC-BY.

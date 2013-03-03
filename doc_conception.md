@@ -87,7 +87,42 @@ La conversion couleur rgb -> encre est effectuée durant l'étape d'extraction des
 
 ### Construction des symboles non bruts ###
 
+Il suffit de rogner les lignes inintéressantes en haut et en bas du symbole. C'est à dire d'enlever les lignes comportante des valeurs d'encre toutes à 0.
 
+Cete action est réalisée par la classe Symbol, dans le fichier symbol.py
 
+### Reconnaissance des symboles et du gros opérateur ###
 
+On tente de trouver les caractères correspondant à chaque symbole de l'énigme, et de trouver le caractère correspondant au gros opérateur, afin d'obtenir le texte de l'énigme.
 
+Un symbole produit toujours un et un seul caractère. Le gros opérateur produit également un et un seul caractère.
+
+Le script possède une bibliothèque des symboles existants. Il tente de retrouver, dans cette bibliothèque, des symboles de l'énigme. L'égalité doit être parfaite. C'est à dire que la taille (hauteur et largeur), et le tableau en 2D des encres doivent être rigoureusement égaux. 
+
+Lorsqu'un symbole de l'énigme ne peut pas être reconnu (il n'y a pas son équivalent dans la bibliothèque des symboles), on considère que son caractère correspondant est le point d'exclamation. Les textes d'énigme ne comportent jamais de point d'exclamation, donc pas de risque de confusion.
+
+Une énigme est "solvable" si son texte ne comporte aucun point d'exclamation.
+
+La bibliothèque des symboles connus se trouve dans le fichier symbdata.py.
+
+Le chargement en mémoire de cette bibliothèque est effectuée par la classe SymbolReferences, dans le fichier symbref.py
+
+L'action de reconnaissance des symboles d'une énigme est effectuée par la classe EnigmaOcr, dans le fichier eniocr.py. Cette classe utilise une instance de SymbolReferences.
+
+La reconnaissance du gros opérateur est effectuée par la classe EnigmaOcr.
+
+### Demande des symboles non reconnus ###
+
+Cette action est effectuée uniquement si l'énigme n'est pas solvable.
+
+Le script écrit le texte actulle de l'énigme sur la console (avec les points d'exclamation), et demande à l'utilisateur de saisir le texte complet de l'énigme, ou bien les caractères correspondants au points d'exclamations.
+
+Cette action est effectuée directement dans le fichier main.py
+
+### remplacement des points d'exclamation par la saisie de l'utilisateur, et mise à jour de la bibliothèque ###
+
+On reconstitue le texte complet de l'énigme, sans point d'exclamation, à partir des éventuels symboles reconnus dès le départ, et de la saisie utilisateur.
+
+Pour qu'une saisie utilisateur soit valide, elle doit respecter les contraintes suivantes :
+
+ - 
