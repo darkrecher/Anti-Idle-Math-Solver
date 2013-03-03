@@ -113,11 +113,11 @@ La reconnaissance du gros opérateur est effectuée par la classe EnigmaOcr.
 
 ### Demande des symboles non reconnus ###
 
-Cette action est effectuée uniquement si l'énigme n'est pas solvable.
+Cette action (ainsi que les 2 actions suivantes) ne sont effectuées que si l'énigme n'est pas solvable.
 
-Le script écrit le texte actulle de l'énigme sur la console (avec les points d'exclamation), et demande à l'utilisateur de saisir le texte complet de l'énigme, ou bien les caractères correspondants au points d'exclamations.
+Le script écrit le texte actuelle de l'énigme sur la console (avec les points d'exclamation), et demande à l'utilisateur de saisir le texte complet de l'énigme, ou bien les caractères correspondants au points d'exclamations. Le script reste en attente tante que l'utilisateur n'a rien saisi.
 
-Cette action est effectuée directement dans le fichier main.py
+Cette action est effectuée directement dans le fichier main.py. (voir la ligne contenant un appel à `raw_input`)
 
 ### remplacement des points d'exclamation par la saisie de l'utilisateur, et mise à jour de la bibliothèque ###
 
@@ -125,4 +125,89 @@ On reconstitue le texte complet de l'énigme, sans point d'exclamation, à partir 
 
 Pour qu'une saisie utilisateur soit valide, elle doit respecter les contraintes suivantes :
 
- - 
+ - Le nombre de caractères saisis est soit égal au nombre total de caractère du texte de l'énigme, soit égal au nombre de point d'exclamation dans le texte de l'énigme.
+ 
+ - Seuls les caractères "0123456789/*-+=?x()," sont autorisés.
+ 
+Si la saisie n'est pas valide, la bibliothèque des symboles n'est pas mise à jour (du moins pas entièrement, voir description détaillée de cette étape, un peu plus loin). 
+
+Si la saisie est valide, on fait correspondre chaque symbole non reconnu avec son caractère saisi par l'utilisateur, et on met ajoute les symboles nouvellement créé dans la bibliothèque.
+
+La bibliothèque de symbole accepte que plusieurs symboles différents correspondent au même caractère. C'est nécessaire, car certains symboles ne sont pas toujours affiché exactement de la même manière.
+
+Cette action est effectuée par la classe EnigmaOcr, ainsi que par l'instance de SymbolReferences contenues dans EnigmaOcr.
+
+### Seconde tentative de reconnaissance des symboles ###
+
+Cette action est exactement la même que celle décrite dans l'étape "Reconnaissance des symboles et du gros opérateur".
+
+Elle est effectuée, même si la saisie utilisateur a été identifiée comme invalide. Ce qui est un peu crétin, je le reconnais.
+
+Si tout s'est bien passé, la bibliothèque des symboles a été correctement mise à jour par la saisie utilisateur. Et cette seconde tentative de reconnaissance doit aboutir à un texte d'énigme sans solvable. 
+
+Même si ce nouveau texte n'est pas solvable, on passe quand même à l'étape suivante.
+
+Les actions crétines de cette étape sont à l'origine du bug "blocage sur la question en cours suite à un échec", décrit dans le fichier readme.md. J'ai la flemme de le corriger.
+
+### Résolution de l'énigme ###
+
+À partir de cette étape, on n'a plus besoin des symboles. Le texte de l'énigme suffit.
+
+Cette action est effectuée quel que soit ce qu'il s'est passé avant. C'est à dire, dans les cas suivants :
+
+ - La reconnaissance des symboles a marché du premier coup et a donné un texte d'énigme solvable.
+ 
+ - La reconnaissance a marché au deuxième coup (après la saisie utilisateur), et a le texte de l'énigme est maintenant solvable.
+
+ - La reconnaissance a échoué deux fois de suite, le texte n'est pas solvable.
+ 
+Un texte d'énigme solvable (sans point d'exclamation) ne va pas forcément aboutir à une réponse. Si la bibliothèque des symboles est incorrecte (parce que l'utilisateur a saisi des conneries), on peut très bien avoir un texte d'énigme considéré comme solvable, mais qui ne veut rien dire. Par exemple : "5=3=8(2".
+
+On tente donc de résoudre l'énigme, cela aboutit à une réponse, ou pas. Si il y a une réponse, elle est affichée dans la console. Sinon, le message "resolution de l'enigme : fail" est affiché.
+
+Que l'énigme ait abouti à une réponse ou pas, on passe aux étapes suivantes. C'est un peu crétin, et ça contribue au bug précédemment mentionné. (Flemme de corriger, comme toujours).
+
+Cette action est effectuée par la classe EnigmaSolver, dans le fichier enisolvr.py.
+
+### Vérification que le jeu est fini ou pas ###
+
+On refait une capture d'écran de la zone d'énigme, si le pixel en bas à gauche n'est plus le bleu de la couleur de fond du jeu, on considère que le jeu est terminé, le script s'arrête.
+
+Cette action est effectuée directement dans le fichier main.py. (voir la ligne définssant la variable `rgb_bottom_left`, et les quelques lignes suivantes)
+
+### Attente de la prochaine énigme ###
+
+Le script refait périodiquement des captures d'écran de la zone d'énigme, et compare l'image obtenue avec l'image de l'énigme précédente. (Tous les pixels ne sont pas systématiquement comparé, il y a un maillage). Dès qu'on trouve un pixel différent, n'importe où dans la zone d'énigme, on considère qu'il y a une nouvelle énigme. On reprend le traitement à l'étape "Extraction des symboles bruts et de la couleur du gros opérateur".
+
+Cette action est effectuée conjointement avec l'action précédente. On vérifie que le jeu est fini ou pas, puis on vérifie que l'énigme a changé ou pas, etc. jusqu'à ce que l'un des 2 événements survienne.
+
+Cette action est effectuée par la classe SymbolExtractor (Même si c'est pas vraiment son rôle et qu'il aurait mieux fallu créer une autre classe pour ça). 
+
+### Dump des symboles nouvellement ajoutés ###
+
+Cette action est effectuée lorsque le script a détecté que le jeu était fini. 
+
+On ne sauvegarde pas automatiquement ces nouveaux symboles. À la place, on les écrit sur la sortie standard. 
+
+Chaque ligne correspond à un symbole qui a été ajouté dans la bibliothèque durant cette exécution du script, suite aux saisies utilisateurs.
+
+Chacune de ces lignes doit être copié et collé dans le fichier symbdata.py, en tant qu'élément supplémentaire du tuple LIST_SYMB_ALARRACHE. 
+
+Pour les branques qui ne connaissent pas la syntaxe du python, il faut ajouter 3 double guillemets : """ au début de la ligne, et 3 double guillemets suivi d'une virgule : """, à la fin de la ligne, pour en faire un élément de tuple valide.
+
+Cette action est effectuée par la classe SymbolReferences (la classe contenant la bibliothèque des symboles).
+
+
+## Mots de vocabulaire utilisé pour composer les noms de variables dans le code. ##
+
+À être continué.
+
+
+## Description détaillée de chaque classe ##
+
+Putain, va y'en avoir encore pour une tartine de blabla. J'aime être verbeux, que voulez-vous.
+
+
+## Améliorations possibles ##
+
+
