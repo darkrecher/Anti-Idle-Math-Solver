@@ -17,7 +17,14 @@ class EnigmaSolver():
         pass
         
     def solve(self, enigma_text):
-        self.enigma_text = enigma_text
+        # suppression des virgules. Ces gros cons d'américains écrivent les 
+        # grands nombres sous la forme 1,234,567. Putain, ils peuvent pas
+        # foutre des espaces comme tout le monde ? Ça va quoi, on sait lire
+        # des grands nombres. On n'est pas des gros débiles.
+        list_enigma_text = [ 
+            char for char in enigma_text 
+            if char != "," ]
+        self.enigma_text = "".join(list_enigma_text)
         if self.enigma_text.endswith("=?"):
             return self._solve_calculation()
         elif "=" not in self.enigma_text:
