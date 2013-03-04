@@ -4,6 +4,8 @@ import wx
 
 # TODO : mettre le bazar d'init de wx ici ?
 
+# TODO : factoriser ces 2 fonctions de merde. 
+
 def capture_screen(
     screen, 
     x_screen, 

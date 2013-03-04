@@ -2,13 +2,13 @@
 
 ## Trucs intéressants présents dans ce script, récupérables pour d'autres projets ##
 
- - Conversion de couleurs RGB vers HSV, sans jamais utiliser de float. (Donc rapide).
+ - Conversion de couleurs RGB vers HSV, sans jamais utiliser de float, donc rapide. Fichier colrtool.py
 
- - Capture d'écran avec la librairie wx.
+ - Capture d'écran avec la librairie wx. Fichier srccapt.py
  
- - Enregistrement de fichier image, au format png, avec wx.
+ - Enregistrement de fichier image, au format png, avec wx. Fichier srccapt.py
  
- - Lecture de pixel dans une image / un dc, avec wx.
+ - Lecture de pixel dans une image ou un dc, avec wx. Fichier gamedtc.py
  
  - Vague idée d'un crawler, qui parcoure une ligne/colonne de pixel, afin de trouver le premier pixel répondant ou ne répondant pas à une condition donnée. (Y'a que l'idée, sans le code).
  
