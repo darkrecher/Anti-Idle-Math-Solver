@@ -8,8 +8,8 @@ PATTERN_SEARCH_STATE = enum(
     "PATTERN_SEARCH_STATE",
     "NOTHING_FOUND",
     "BEFORE_LEFT_BORDER",
-    "IN_game_COLOR_OK",
-    "IN_game_COLOR_NO",
+    "IN_GAME_COLOR_OK",
+    "IN_GAME_COLOR_NO",
     "RIGHT_LIT_PIXEL",
     "AFTER_RIGHT_BORDER",
 )
@@ -86,7 +86,8 @@ class GameRectDetector():
         y_rez_size = y_scr_rez_bottom - y_scr_rez_top
         return (x_scr_rez_left, y_scr_rez_top, x_rez_size, y_rez_size)
     
-    # TODO : underscore au début des fonctions, pour les suivantes, jusqu'à la fin.
+    # TODO : underscore au début des fonctions, 
+    # pour les suivantes, jusqu'à la fin du module.
     def get_pixel(self, x, y):
         return self.dc_img.GetPixel(x, y)[0:3]
         
@@ -122,12 +123,12 @@ class GameRectDetector():
                     
             elif pss_cur == pss.BEFORE_LEFT_BORDER:
                 if rgb_cur == self.RGB_EXACT_INSIDE_SQUARE:
-                    pss_cur = pss.IN_game_COLOR_OK
+                    pss_cur = pss.IN_GAME_COLOR_OK
                     x_pattern_start = x_cur
                 elif not self.is_approx_extern_border(rgb_cur):
                     pss_cur = pss.NOTHING_FOUND
                     
-            elif pss_cur == pss.IN_game_COLOR_OK:
+            elif pss_cur == pss.IN_GAME_COLOR_OK:
                 if rgb_cur == self.RGB_EXACT_RIGHT_LIT_PIXEL:
                     pss_cur = pss.RIGHT_LIT_PIXEL
                     x_pattern_end = x_cur - 1
@@ -135,11 +136,11 @@ class GameRectDetector():
                     pss_cur = pss.AFTER_RIGHT_BORDER
                     x_pattern_end = x_cur - 1
                 elif rgb_cur != self.RGB_EXACT_INSIDE_SQUARE:        
-                    pss_cur = pss.IN_game_COLOR_NO
+                    pss_cur = pss.IN_GAME_COLOR_NO
                 
-            elif pss_cur == pss.IN_game_COLOR_NO:
+            elif pss_cur == pss.IN_GAME_COLOR_NO:
                 if rgb_cur == self.RGB_EXACT_INSIDE_SQUARE:
-                    pss_cur = pss.IN_game_COLOR_OK
+                    pss_cur = pss.IN_GAME_COLOR_OK
                 
             elif pss_cur == pss.RIGHT_LIT_PIXEL:
                 if self.is_approx_extern_border(rgb_cur):
@@ -182,6 +183,9 @@ class GameRectDetector():
             y_step = y_step / 2
             y_cursor = 0
             while y_cursor < self.size_y_img:
+                # TODO : on risque de retenter une détection sur une ligne
+                # déjà testée. 
+                # Il faut mémoizer les résultats de detect_line_pattern.
                 detect_result = self.detect_line_pattern(y_cursor)
                 log("detect pattern:", y_cursor, "result:", detect_result)
                 if detect_result is not None:

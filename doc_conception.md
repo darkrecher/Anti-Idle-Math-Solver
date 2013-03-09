@@ -256,9 +256,15 @@ Pour les branques qui ne connaissent pas la syntaxe du python : il faut ajouter 
 
 `pattern` : ligne ou colonne de pixel, correspondant à un motif précis. Par exemple : "un ou plusieurs pixels rouge, puis 10 pixels verts, puis éventuellement un pixel violet".
 
-`cursor` : coordonnées x ou y, qu'on fait avancer, pour vérifier ou chercher des trucs dans des pixels.
+`cursor` : une coordonnée x ou y, qu'on fait avancer, pour vérifier ou chercher des trucs dans des pixels.
 
+`crop` : rognage. Action de supprimer une ligne ou une colonne située au bord d'une image, parce qu'elle n'est pas intéressante.
 
+`ink` ou `inks` : une encre d'un pixel, ou les encre d'un tableau de pixel.
+
+`raw_symbol` : tableau de ink (c'est à dire : une liste de liste). contient les ink d'un symbole.
+
+`signifiance` : 
 
 ## Description détaillée de chaque classe ##
 

@@ -40,9 +40,9 @@ class EnigmaZoneDetector():
             ( self._is_pixel_interesting(x, y) 
               for x in range(self.x_size_rez) ) )
 
-    def _crop_line(self, y_start, direction, end):
+    def _crop_line(self, y_start, direction, y_end):
         y_cur = y_start
-        while not self._is_line_interesting(y_cur) and y_cur != end:
+        while not self._is_line_interesting(y_cur) and y_cur != y_end:
             y_cur += direction
         return y_cur
         
