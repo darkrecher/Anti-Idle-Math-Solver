@@ -1,5 +1,78 @@
 ﻿# -*- coding: utf-8 -*-
 
+""" 
+Module contenant la classe GameRectDetector, qui permet de repérer la position
+et la taille de la zone de jeu à l'écran.
+
+Mode d'emploi
+=============
+
+Effectuer une capture d'écran dans un wx.memoryDc.
+Instancier une casse GameRectDetector, en lui passant en paramètre
+le memoryDc et ses dimensions.
+
+Appeler la fonction get_rect_raw_enigma_zone. Si la fonction renvoie True,
+la détection de la zone de jeu a fonctionné. Dans ce cas, on peut récupérer 
+les membres de l'instance : y_first_pattern, x_game_left, 
+x_game_right, y_game_top, y_game_bottom, x_game_size, y_game_size.
+
+Si la détection a fonctionné, on peut ensuite appeler la fonction
+get_rect_raw_enigma_zone, qui renvoie un tuple de 4 valeurs, correspondant
+au rectangle de la zone d'énigme brute.
+Les valeurs du tuple sont : 
+x_scr_rez_left, y_scr_rez_top, x_rez_size, y_rez_size
+
+Les deux premières valeurs sont les coordonnées du coin supérieur gauche de 
+la zone d'énigme brute. Elles sont définies par rapport au coin sup gauche
+de l'écran, et non le coin sup gauche de la zone de jeu.
+
+les deux dernières valeurs sont les dimensions de la zone d'énigme brute.
+
+Fonctionnement interne
+======================
+
+Les lignes de pixels qui traverse la zone de jeu ont un motif spécifique, pour
+plus de détail concernant ce motif, voir docstring de detect_line_pattern.
+
+Lorsque le motif est présent, il permet de déduire la position des bords
+gauche et droits de la zone de jeu.
+
+Recherche de la 1ère ligne traversant la zone de jeu.
+-----------------------------------------------------
+
+Cette étape est réalisée par les fonctions detect_line_pattern et 
+find_first_line_pattern.
+
+On commence par chercher une première ligne de pixel, dans le dc de la capture
+d'écran, qui posséderait ce motif. On regarde la ligne située au milieu de
+l'écran. Puis celles situées au quart, aux deux quarts et aux trois quarts.
+Puis celles situées aux huitième, deux huitièmes, etc...
+Dès qu'on trouve une ligne contenant le motif, on arrête la recherche et on
+passe à l'étape suivante.
+
+Si on n'a toujours rien trouvé, même après avoir beaucoup diminué le pas de
+déplacement, jusqu'à une certaine limite (en nombre absolu de pixel), on 
+laisse tomber. La zone de jeu est introuvable, ou pas présente du tout, dans
+la capture d'écran.
+
+Recherche des bords haut et bas de la zone de jeu.
+--------------------------------------------------
+
+Cette étape est réalisée par les fonctions check_pattern et 
+detect_line_pattern_limit.
+
+Maintenant qu'on connait les bords gauche et droit, il est très rapide, sur
+une ligne de pixel donnée, de vérifier si elle possède le motif ou pas. 
+
+Pour une description précise de ce qu'on vérifie, voir docstring de 
+check_pattern.
+
+
+
+
+
+"""
+
 from log import log
 from enum import enum
 from colrtool import hsv_from_rgb, is_same_col
@@ -17,8 +90,7 @@ PATTERN_SEARCH_STATE = enum(
 pss = PATTERN_SEARCH_STATE
 
 class GameRectDetector():
-    """ 
-    """
+
     HSV_APPROX_EXTERN_BORDER = (32, 27, 23)
     # TRIP: 51 je t'aimeu, j'en boirais des tonneaux, 
     # à me rouler par terreu, dans tous les caniveaux
@@ -46,6 +118,7 @@ class GameRectDetector():
         self.y_game_size = None
         self.square_detected = False
         
+    # TODO : les param de la fonction init devrait être dans cette fonction.
     def detect_rect(self):
         if not self.find_first_line_pattern():
             log("first line pattern fail")
@@ -97,20 +170,47 @@ class GameRectDetector():
         
     def detect_line_pattern(self, y):
         """
-        La ligne de pixel respecte le pattern si il est comme ça :
+        Parcourt une ligne de pixel, et tente d'y trouver un motif (pattern)
+        spécifique, qui correspondrait à la zone de jeu.
+        
+        :param y: ordonnée de la ligne de pixel à parcourir, dans self.dc_img.
+        :return: None si le motif n'a pas été trouvé, un tuple de 2 entiers si
+        le motif a été trouvé. Ces entiers indiquent les abscisses des 1er et
+        dernier pixels gris foncé, censés correspondre aux bords gauche et 
+        droit du rectangle de la zone de jeu.
+        
+        La ligne de pixel respecte le motif si, lorsqu'on la parcourt, on 
+        rencontre des pixels dans cet ordre :
          - N'importe quoi
          - Un ou plusieurs pixels approximativement marron, du bord extérieur.
          - Un ou plusieurs pixels exactement gris foncé du rectangle de jeu.
-         - N'importe quoi, (ça peut être que des pixels gris)
+         - N'importe quoi, (y compris des pixels gris foncé)
+         - Un ou plusieurs pixels exactement gris foncé du rectangle de jeu.
          - Éventuellement, un ou plusieurs pixels exactement gris clair. 
            (bord éclairé du rectangle de jeu).
          - Un ou plusieurs pixels approximativement marron, du bord extérieur.
          - N'importe quoi.
-        La fonction renvoie None si le pattern n'est pas présent.
-        Elle renvoie un tuple (x1, x2) si le pattern est présent.
-          x1 = premier pixel gris foncé du rectangle de jeu.
-          x2 = dernier pixel gris foncé du rectangle de jeu.
+         
+        Pour savoir où on en est, on met en place une espèce de vague machine
+        à état, dont les différents états sont définis par l'enum
+        PATTERN_SEARCH_STATE.
+        
+         - NOTHING_FOUND : On est dans le n'importe quoi du début.
+         - BEFORE_LEFT_BORDER : Les pixels à peu près marron, avant le bord
+           gauche de la zone de jeu.
+         - IN_GAME_COLOR_OK : Les pixels gris foncé dans la zone de jeu.
+         - IN_GAME_COLOR_NO : Du n'importe quoi, pendant qu'on est dans la 
+           zone de jeu.
+         - RIGHT_LIT_PIXEL : Les éventuels pixels gris clair, à droite de la 
+           zone de jeu.
+         - AFTER_RIGHT_BORDER : Les pixels à peu près marron, après le bord 
+           droit de la zone de jeu. Si on arrive à cet état, le motif a été 
+           trouvé dans la ligne de pixel.
+        
+        Si on arrive à la fin de la ligne en étant dans un autre état que 
+        AFTER_RIGHT_BORDER, le motif n'a pas été trouvé.
         """
+        # TRIP: AAAAHHH aAHAAHAHAAAHAAAAHHHH !!! AAAHAAHAAAAAAHHH !!
         pss_cur = pss.NOTHING_FOUND
         x_pattern_start = None
         x_pattern_end = None
@@ -154,6 +254,9 @@ class GameRectDetector():
         return None
     
     def check_pattern(self, y):
+        """
+        WIP.
+        """
         if y < 0 or y > self.size_y_img:
             return False
         if self.x_game_left is None or self.x_game_right is None:
