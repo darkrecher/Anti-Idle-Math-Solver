@@ -202,9 +202,9 @@ Pour les branques qui ne connaissent pas la syntaxe du python : il faut ajouter 
 
 `_scr_` : une coordonnée définie par rapport à l'écran, et non pas par rapport à un dc quelconque.
 
-`rez` : raw enigma zone. Rectangle représentant la zone d'énigme brute
+`rez`, `raw_enigma_zone` : Rectangle représentant la zone d'énigme brute
 
-`ez` : enigma zone. Rectangle représentant la zone d'énigme affinée.
+`ez`, `enigma_zone` : Rectangle représentant la zone d'énigme affinée.
 
 `dc_` : dc (drawing context), de la librairie wx.
 
@@ -228,9 +228,15 @@ Pour les branques qui ne connaissent pas la syntaxe du python : il faut ajouter 
 
 `hsv_` : trouple de 3 entiers. Composante Hue-Saturation-Value d'une couleur.
 
-`red grn blu hue sat val` : composante spécifique des trouples rgb et hsv.
+`red grn blu hue sat val` : les composantes spécifiques des trouples rgb et hsv.
+
+`comp` : composante. Nom générique pour désigner une composante (n'importe laquelle) d'une couleur rgb ou hsv.
 
 `col` : couleur. Terme générique pour dire que ça peut être du hsv ou du rgb.
+
+`_EXACT_` : couleur de référence d'un "truc" spécifique . (Par exemple, la couleur de fond de la zone d'énigme, la couleur verte du gros opérateur '+', ...). Cette couleur de référence est comparée avec la couleur d'un pixel de l'écran, et elles doivent être rigoureusement exacte, pour repérer le "truc" en question.
+
+`_APPROX_` : couleur de référence d'un "truc" spécifique. (Par exemple, la couleur marron-bois-moche délimitant l'extérieur de la zone de jeu). On autorise un certain écart (prédéfini) entre cette couleur de référence et la couleur d'un pixel de l'écran, pour repérer le "truc" en question.
 
 `enigma_text` : le texte de l'énigme
 
@@ -258,14 +264,44 @@ Pour les branques qui ne connaissent pas la syntaxe du python : il faut ajouter 
 
 `cursor` : une coordonnée x ou y, qu'on fait avancer, pour vérifier ou chercher des trucs dans des pixels.
 
+`cur` : valeur courante. Une valeur qu'on fait avancer dans une boucle.
+
 `crop` : rognage. Action de supprimer une ligne ou une colonne située au bord d'une image, parce qu'elle n'est pas intéressante.
 
-`ink` ou `inks` : une encre d'un pixel, ou les encre d'un tableau de pixel.
+`ink` ou `inks` : une valeur d'encre d'un pixel, ou les valeurs d'encres d'un tableau de pixel.
 
-`raw_symbol` : tableau de ink (c'est à dire : une liste de liste). contient les ink d'un symbole.
+`array_inks` : tableau 2D des encres d'un symbole, rangés comme il faut. C'est une liste. Chaque élément est une sous-liste. Chaque sous-liste représente une ligne de valeur d'encre.
 
-`signifiance` : 
+`raw_symbol` : tableau 2D des encres d'un symbole. Il peut y avoir, dans une ou plusieurs lignes du début, et dans une ou plusieurs lignes de la fin, des valeurs d'encres toutes à zéro.
 
+`columord_symb`: "column-ordered symbol". tableau 2D des encres d'un symbole, rangés par colonne. (c'est comme ça qu'on récupère les symboles au départ, car on analyse la zone d'énigme colonne par colonne). C'est une liste. Chaque élément est une sous-liste. Chaque sous-liste représente une colonne de valeur d'encre. Un tableau columord_symb est "raw", et non pas "affiné". C'est à dire que des lignes du haut et du bas peuvent avoir des valeurs d'encres toutes à zéro. Mais c'est difficilement détectable en l'état, puisque les valeurs d'encre d'une ligne sont dispersés dans le tableau.
+
+`flat_list_ink` : grande liste (en une dimension) des valeurs d'encres d'un symbole. Correspond à array_inks, sauf que toutes les valeurs sont mises bout à bout. Une variable flat_list_ink ne permet pas de connaître les dimensions (largeur, hauteur) d'un symbole. Il faut avoir stockées ces infos autre part.
+
+`sig`, `signifiance` : string de un seul caractère, représentant ce que signifie un symbole. C'est ce qui permet de passer d'une liste de symbole au texte d'une énigme.
+
+`saved_data` : grande string, contenant les informations permettant de sauvegarder un symbole. Chaque élément de LIST_SYMB_ALARRACHE est une saved_data. Une saved_data contient, dans cet ordre : 
+ - la signifiance (un caractère)
+ - la largeur et la hauteur du symbole. (deux valeurs numériques, converties en string).
+ - la flat_list_ink du symbole. (plusieurs valeurs numériques, converties en string).
+Le séparateur est le caractère espace.
+ 
+`comes_from_raw_symbol` : booléen permettant de savoir d'où vient un symbole. 
+ - True : le symbole a été défini par un `raw_symbol`. C'était un symbole inconnu au départ, on l'a trouvé dans une énigme posée par le jeu, et l'utilisateur a saisi sa `signifiance`.
+ - False : le symbole était connu au départ. ses dimensions, ses valeurs d'encre et sa `signifiance` se trouvaient tous dans une `saved_data`.
+ 
+`ref`, `reference` : symbole de référence, dont la signifiance est connue. On essaie de faire correspondre chaque symbole d'une énigme à un symbole de référence, pour déterminer le texte de l'énigme.
+
+`calculation` : type d'énigme, pour laquelle il faut calculer une valeur numérique. Exemple : *2 + 2 = ?*
+
+`comparrison` : type d'énigme, pour laquelle il faut comparer deux valeurs numériques (en faisant plus ou moins de calcul intermédiaire). Par exemple : *12+3 ? 28/2 *. Il faut trouver si 12+3 est plus grand, égal ou plus petit que 28/2.
+
+`find_operator` : type d'énigme, pour laquelle il faut trouver l'opérateur manquant, afin de vérifier l'égalité mentionnée. Par exemple : *3 ? 2 = 6*. Il faut trouver quelle égalité est vraie, parmi les 4 possibilités : *3 + 2 = 6*, *3 - 2 = 6*, *3 * 2 = 6*, *3 / 2 = 6*.
+
+`_enigma_part` : string. morceau de texte d'énigme, contenant une opération mathématique que l'on peut calculer immédiatement. Une _enigma_part ne doit contenir que des chiffres, des parenthèses et les 4 opérations. Elle ne doit pas contenir de signe égal ou de point d'interrogation.
+
+`_val` : valeur numérique. Résultat du calcul d'une `_enigma_part`.
+ 
 ## Description détaillée de chaque classe ##
 
 Putain, va y'en avoir encore pour une tartine de blabla. J'aime être verbeux, que voulez-vous.
