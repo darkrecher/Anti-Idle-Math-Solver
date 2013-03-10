@@ -302,10 +302,9 @@ Le séparateur est le caractère espace.
 
 `_val` : valeur numérique. Résultat du calcul d'une `_enigma_part`.
  
-## Description détaillée de chaque classe ##
+## Description détaillée de chaque module ##
 
-Putain, va y'en avoir encore pour une tartine de blabla. J'aime être verbeux, que voulez-vous.
-
+Voir les docstrings.
 
 ## Améliorations possibles ##
 
@@ -315,4 +314,10 @@ Putain, va y'en avoir encore pour une tartine de blabla. J'aime être verbeux, qu
  
  - Arrêter de passer les dimensions d'un DC en même temps que le DC.
  
- - Tous les TODO indiqués dans le code.
+ - Reconnaissance de symbole un peu mieux foutu. Calculer les différences d'encre entre le symbole en cours d'analyse, et les symboles de la bibliothèque. Si on en trouve un qui n'a pas beaucoup de différence (seuil à déterminer), on considère que c'est égal.
+ 
+ - Essayer de s'affranchir complètement de la résolution de l'écran. Mettre à l'échelle les symboles de la bibliothèque pour que la taille corresponde au symbole en cours d'analyse (avec une espèce d'extrapolation 2D du tableau des valeurs d'encre). Tout en memoizant le truc, comme ça si exactement le même symbole revient, on le retrouve tout de suite.
+ 
+ - Sauvegarder automatiquement dans un fichier les nouveaux symboles saisis par l'utilisateur.
+ 
+ - Tous les TODO indiqués dans le code. 
