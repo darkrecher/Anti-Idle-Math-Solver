@@ -1,6 +1,10 @@
 ﻿# -*- coding: utf-8 -*-
 
 """ 
+créé par Réchèr. Licence CC-BY ou Art Libre.
+https://github.com/darkrecher/Anti-Idle-Math-Solver
+je prends les bitcoins : 12wF4PWLeVAoaU1ozD1cnQprSiKr6dYW1G
+
 Module contenant la classe GameRectDetector, qui permet de repérer la position
 et la taille de la zone de jeu à l'écran.
 
@@ -28,8 +32,8 @@ de l'écran, et non le coin sup gauche de la zone de jeu.
 
 les deux dernières valeurs sont les dimensions de la zone d'énigme brute.
 
-Fonctionnement interne
-======================
+Fonctionnement interne (comme les tripes)
+=========================================
 
 Les lignes de pixels qui traverse la zone de jeu ont un motif spécifique, pour
 plus de détail concernant ce motif, voir docstring de detect_line_pattern.
@@ -67,10 +71,46 @@ une ligne de pixel donnée, de vérifier si elle possède le motif ou pas.
 Pour une description précise de ce qu'on vérifie, voir docstring de 
 check_pattern.
 
+On part de y = y_de_la_ligne_de_pattern_trouvée. 
+On commence par remonter. On fixe un pas y_step suffisamment grand, mais pas
+trop (osef du pas initial). On avance de ce pas. 
+Si on tombe sur une ligne respectant le motif, c'est cool. On garde ce y, et 
+on avance du même pas.
+Si on tombe sur une ligne ne respectant même pas le motif, c'est moins cool.
+On divise le pas par deux, et on revient au y précédent. On aura peut-être 
+plus de chances la prochaine fois.
+Le pas diminue petit à petit, et le y remonte. Lorsque le pas est sur le point
+d'atteindre 0, on fait obligatoirement une dernière remontée avec un pas de 1.
+Quand c'est fini, on a trouvé le bord haut de l'aire de jeu.
 
+Ensuite, on repart du y de départ, et on recommence en descendant, afin de 
+trouver le le bord bas.
 
+Vérification des proportions
+----------------------------
 
+Cette étape est réalisée directement dans la fonction detect_rect.
 
+La proportion largeur / hauteur de la zone de jeu trouvée doit être égal à 
+1.5370370, avec une marge de plus ou moins 0.1. Sinon, on ne considère pas
+que les bords trouvés délimitent une zone de jeu, et on abandonne les
+recherches. (Ça fait bizarre de dire "on abandonne les recherches").
+
+Vérifications complètes des pixels sur les bords
+------------------------------------------------
+
+Cette étape est réalisée par la fonction check_game_border_colors.
+
+On vérifie que tous les pixels des 4 bords de la zone de jeu sont tous de la
+couleur gris foncé de la zone de jeu. Sinon, on abandonne.
+
+Détermination de la zone d'énigme brute
+---------------------------------------
+
+Cette étape est réalisée par la fonction get_rect_raw_enigma_zone.
+Rien de bien compliqué, on prend juste un rectangle situé à l'intérieur de
+la zone de jeu, selon une position et une taille prédéfine, relative à la zone
+de jeu.
 """
 
 from log import log
@@ -255,7 +295,26 @@ class GameRectDetector():
     
     def check_pattern(self, y):
         """
-        WIP.
+        Vérifie des pixels d'une ligne, afin de savoir si celle-ci traverse
+        la zone de jeu ou pas. Cette fonction doit être appelée après qu'on
+        ait trouvé une première ligne traversant la zone de jeu. Les variables
+        membres self.x_game_left et self.x_game_right doivent avoir été 
+        définies.
+        
+        :param y: ordonnée de la ligne de pixel à vérifier, dans self.dc_img.
+        :return: False : La ligne ne contient pas le motif, elle ne traverse
+        pas la zone de jeu. True : elle contient le motif.
+        
+        Les trucs qu'on vérifie : 
+         - Les obviouseries de base : y est dans l'écran, les x_game_left et
+           x_game_right sont définis.
+         - Le pixel juste avant le bord gauche est approximativement de la
+           couleur marron-bois-moche.
+         - Le pixel du bord gauche est du gris foncé de zone de jeu.
+         - Le pixel du bord droit est du gris foncé de zone de jeu.
+         - Il y a 0, 1 ou plusieurs pixels gris clair juste après le bord 
+           droit.
+         - le pixel à droie des pixels gris clair est en marron-bois-moche.
         """
         if y < 0 or y > self.size_y_img:
             return False
@@ -299,7 +358,8 @@ class GameRectDetector():
         return False
     
     def detect_line_pattern_limit(self, y_direction):
-        """y_direction doit valoir +1 ou -1, sinon ça fait nimp.
+        """
+        y_direction doit valoir +1 ou -1, sinon ça fait nimp.
         """
         y_cursor = self.y_first_pattern
         y_last_pattern = self.y_first_pattern
