@@ -321,3 +321,5 @@ Voir les docstrings.
  - Sauvegarder automatiquement dans un fichier les nouveaux symboles saisis par l'utilisateur.
  
  - Tous les TODO indiqués dans le code. 
+
+ - Trouver une solution pour les bugs connus.
