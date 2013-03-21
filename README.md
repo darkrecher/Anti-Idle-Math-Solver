@@ -98,6 +98,10 @@ Si la première énigme posée ne comporte pas de 8, le script croira que la zon
 
 C'est un bug "qui n'est pas censé arriver". Tous les symboles de chiffres ont la même hauteur. Et tous les autres symboles sont soit plus petits, soit de hauteur égales. Et il y a toujours au moins un chiffre quel que soit l'énigme.
 
+## Cafouillage sur les couleurs du gros opérateur ##
+
+Si la zone d'énigme comporte des pixels de couleurs (76, 76, 76), ça plante. Il y a quelques autres couleurs pour lesquelles ça plantera aussi. Voir le TODO dans symbextr.py, au-dessus de la fonction is_rgb_big_op pour une explication plus détaillée.
+
 # Voili voilà #
 
 Pour une description détaillée du code, des algorithmes, et des bidouillages employés, se référer au fichier doc_conception.md de ce repository.
