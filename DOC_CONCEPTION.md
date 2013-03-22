@@ -10,7 +10,7 @@
  
  - Lecture de pixel dans une image ou un dc, avec wx. Fichier `gamedtc.py` et autres.
  
- - Vague idée d'un crawler, parcourant une ligne ou une colonne de pixels, afin de trouver celui ou ceux répondant ou ne répondant pas à une condition donnée. (Y'a que l'idée, sans le code).
+ - Vague idée d'un crawler générique, parcourant une ligne ou une colonne de pixels, afin de trouver celui ou ceux répondant ou ne répondant pas à une condition donnée. (Y'a que l'idée, sans le code).
  
 ## Macro-description du script ##
 
@@ -56,25 +56,25 @@ Un "symbole" = la représentation graphique de l'un des caractères du texte de l'
 
 Les symboles ont un détourage noir. L'affinage de la zone d'énigme a pour conséquence de rogner le haut et le bas de ce détourage, mais ça ne dérange pas. 
 
-La zone n'est rognée ni à gauche ni à droite, car on ne peut pas présumer de la longeur d'affichage d'une énigme.
+La zone d'énigme n'est rognée ni à gauche ni à droite, car on ne peut pas présumer de la longeur d'affichage d'une énigme.
 
 ### Extraction des symboles bruts et de la couleur du gros opérateur ###
 
 Ces actions sont effectuées par la classe `SymbolExtractor`, dans le fichier `symbextr.py`.
 
-Un "symbole brut" = comme un symbole, sauf que les lignes de pixels pas intéressants, éventuellement présentes en haut et en bas, ne sont pas encore rognées. Par exemple, le signe "=" a une hauteur plus petite que la zone d'énigme (même après affinage de cettedite zone). Lorsqu'on affinera le symbole du "=", on enlèvera des lignes de pixels en haut en en bas.
+Un "symbole brut" = comme un symbole, sauf que le rognage éventuel de lignes de pixels en haut et en bas n'a pas encore été fait. Par exemple, le signe "=" a une hauteur plus petite que la zone d'énigme (même après affinage de cettedite zone). Lorsqu'on affinera le symbole du "=", on enlèvera des lignes en haut en en bas.
 
 Le "gros opérateur" = L'opérateur que l'on voit parfois dans le texte d'une énigme, dans un cadre coloré. Dans les images ci-dessus, c'est le "+" vert.
 
 Le jeu écrit les symboles en les espaçant suffisamment, et on a toujours au moins une colonne de pixels pas intéressants entre deux symboles. (Du moins avec une résolution d'écran pas trop dégueux). Ça arrange bien les choses.
 
-Dans la zone de l'énigme, on considère donc que lorsqu'on trouve plusieurs colonne adjacentes, comportant chacune au moins un pixel intéressant, alors cela constitue un symbole unique.
+Dans la zone d'énigme, on considère donc que lorsqu'on trouve plusieurs colonnes adjacentes, comportant chacune au moins un pixel intéressant, alors cela constitue un symbole unique.
 
 L'extraction de symboles renvoie 3 informations :
 
  - la liste des symboles trouvées avant le gros opérateur.
  
- - la couleur d'un pixel du gros opérateur. On n'a pas besoin de son dessin complet. On déduira l'opérateur correspondant à partir de cette simple couleur.
+ - la couleur d'un pixel du gros opérateur. On n'a pas besoin de son dessin complet. On déduira quel opérateur c'est à partir de cette simple couleur.
  
  - la liste des symboles trouvées après le gros opérateur. 
  
@@ -84,15 +84,19 @@ Certains textes d'énigme ne comportent pas de gros opérateur. Par exemple : 2?3=
 
 Cette action est effectuée durant l'extraction des symboles bruts (voir étape précédente), par la fonction `SymbolExtractor._get_ink_of_pixel`, dans le fichier `symbextr.py`.
 
-Un symbole est un dessin, et peut donc se définir par un tableau en 2D, contenant des couleurs rgb. Mais dans le script, on remplace ces couleurs par des valeurs d'encre. 
+Un symbole est un dessin, et peut donc se définir par un tableau en 2D, contenant des couleurs rgb. Mais le script remplace ces couleurs par des valeurs d'encre. 
 
-Une "valeur d'encre" = un nombre entre 0 et 255, représentant, pour un pixel donné, son intensité en couleur jaune ou blanche. La valeur d'encre n'indique vraiment que l'intensité, et pas le fait que ce soit du jaune ou du blanc. Mais ça, on n'en a pas besoin.
+Une "valeur d'encre" = un nombre entre 0 et 255, représentant, pour un pixel donné, son intensité en couleur jaune ou blanche. La valeur d'encre n'indique vraiment que l'intensité, et pas le fait que ce soit du jaune ou du blanc, car on n'en a pas besoin.
+
+Un pixel qui n'est ni jaune ni blanc a une valeur d'encre de 0.
+
+Un pixel est dit "intéressant" si il est suffisamment jaune ou blanc. Sa valeur d'encre doit être supérieure à 100. (Seuil fixé de manière empirico-arbitraire).
 
 ### Construction des symboles affinés ###
 
 Cette action est réalisée par la classe `Symbol`, dans le fichier `symbol.py`.
 
-Il suffit de rogner les lignes en haut et en bas du symbole, qui n'ont que des valeurs d'encre à 0.
+On rogne les lignes en haut et en bas du symbole, qui n'ont que des valeurs d'encre à 0.
 
 ### Reconnaissance des symboles et du gros opérateur ###
 
@@ -100,11 +104,11 @@ Cette action est réalisée par les fichiers `symbdata.py`, `symbref.py`, et `enio
 
 On tente de trouver les caractères constituant le texte de l'énigme. Un symbole produit toujours un et un seul caractère. Le gros opérateur produit également un et un seul caractère.
 
-Le script possède une bibliothèque de symboles connus, dans le fichier `symbdata.py`. Son chargement en mémoire a été effectuée au début, par la classe `SymbolReferences`, dans le fichier `symbref.py`.
+Le script possède une bibliothèque de symboles connus, dans le fichier `symbdata.py`. Son chargement en mémoire a été effectuée au début, par la classe `SymbolReferences`, du fichier `symbref.py`.
 
-Les actions de reconnaissance des symboles et du gros opérateur sont effectuées par la classe `EnigmaOcr`, dans le fichier `eniocr.py`.
+Les actions de reconnaissance des symboles et du gros opérateur sont effectuées par la classe `EnigmaOcr`, du fichier `eniocr.py`.
 
-Le script tente de retrouver, dans sa bibliothèque, des symboles de l'énigme, en faisant une comparaison d'égalité parfaite. Les tableaux 2D des valeurs d'encres doivent être rigoureusement égaux. 
+Le script tente de faire correspondre des symboles de sa bibliothèque avec les symboles de l'énigme, via une égalité parfaite. Les tableaux 2D des valeurs d'encres doivent être rigoureusement égaux. 
 
 Lorsqu'un symbole de l'énigme ne peut pas être reconnu (il n'y a pas son équivalent dans la bibliothèque des symboles), on considère que son caractère est le point d'exclamation. Les textes d'énigme affichés par le jeu ne comportent jamais de point d'exclamation. Il n'y a donc pas de risque de confusion.
 
@@ -124,9 +128,9 @@ Si l'utilisateur saisi un nombre de caractères différents du nombre total de car
 
 Cette action est effectuée par la classe `EnigmaOcr`, ainsi que par l'instance de `SymbolReferences` contenue dans `EnigmaOcr`.
 
-On associe les symboles inconnus avec leurs caractères correspondants, de la saisie utilisateur. On complète la bibliothèque avec ces nouveaux symboles. 
+On associe les symboles inconnus avec leurs caractères correspondants de la saisie utilisateur. On complète la bibliothèque avec ces nouveaux symboles. 
 
-La bibliothèque de symboles accepte plusieurs symboles différents pour un même caractère. C'est nécessaire, car certains symboles ne sont pas toujours affiché de la même manière.
+La bibliothèque de symboles accepte plusieurs symboles différents associés à un même caractère. C'est nécessaire, car certains caractères ne sont pas toujours affichés exactement de la même manière.
 
 Si l'utilisateur saisit un caractère différent de *0123456789 / * - + = ? x ( ) ,* , on ne l'associe pas à son symbole et on ne l'ajoute pas dans la bibliothèque. Les textes d'énigmes sont censés être constitués uniquement de ces caractères.
  
@@ -182,7 +186,7 @@ Cette action est effectuée par la classe `SymbolReferences`, lorsque le script a
 
 Le script ne sauvegarde rien (flemme), à la place, il écrit les nouveaux symboles sur la sortie standard. 
 
-Chaque ligne écrite correspond à un symbole. Le script n'écrit que les symboles ajoutés dans la bibliothèque suite aux saisies utilisateurs. Il ne réécrit pas les symboles déjà connus par `symbdata.py`.
+Chaque ligne correspond à un symbole. Le script n'écrit que les symboles ajoutés dans la bibliothèque suite aux saisies utilisateurs. Il ne réécrit pas les symboles déjà connus par `symbdata.py`.
 
 Chacune de ces lignes doit donc être manuellement recopiées dans `symbdata.py`, en tant qu'élément supplémentaire du tuple `LIST_SYMB_ALARRACHE`. 
 
@@ -194,9 +198,9 @@ Pour les branques qui ne connaissent pas la syntaxe du python : il faut ajouter 
 
 `_scr_` : une coordonnée définie par rapport à l'écran, et non pas par rapport à un dc quelconque.
 
-`rez`, `raw_enigma_zone` : Rectangle représentant la zone d'énigme brute
+`rez`, `raw_enigma_zone` : rectangle représentant la zone d'énigme brute
 
-`ez`, `enigma_zone` : Rectangle représentant la zone d'énigme affinée.
+`ez`, `enigma_zone` :rRectangle représentant la zone d'énigme affinée.
 
 `dc_` : dc (drawing context), de la librairie wx.
 
@@ -204,11 +208,11 @@ Pour les branques qui ne connaissent pas la syntaxe du python : il faut ajouter 
 
 `_raw_` : brut. (zone d'énigme, symbole, etc)
 
-`_proc_` : processed. Affiné. le contraire de brut. Je ne mets pas systématiquement ce mot dans les noms de variables. Uniquement dans les situations où on veut bien montrer qu'on passe du brut à l'affiné. Quand y'a ni "raw", ni "proc", c'est que c'est affiné.
+`_proc_` : processed. Affiné. le contraire de brut. Je ne mets pas systématiquement ce mot dans les noms de variables. Uniquement dans les situations où on veut montrer qu'on passe du brut à l'affiné. Quand y'a ni "raw", ni "proc", c'est que c'est affiné.
 
 `screen` : le dc correspondant à l'écran du n'ordinateur.
 
-`list_` : peut être un tuple ou une liste, on fait pas la différence. (duck typing, tout ça).
+`list_` : un tuple ou une liste, on fait pas la différence. (duck typing, tout ça).
 
 `_big_op` : le gros opérateur, qui est parfois présent dans les zones d'énigme.
 
@@ -218,7 +222,7 @@ Pour les branques qui ne connaissent pas la syntaxe du python : il faut ajouter 
 
 `rgb_` : trouple (tuple de 3 entiers). Composantes Red-Green-Blue d'une couleur.
 
-`hsv_` : trouple de 3 entiers. Composante Hue-Saturation-Value d'une couleur.
+`hsv_` : trouple d'entiers. Composantes Hue-Saturation-Value d'une couleur.
 
 `red grn blu hue sat val` : les composantes spécifiques des trouples rgb et hsv.
 
@@ -226,7 +230,7 @@ Pour les branques qui ne connaissent pas la syntaxe du python : il faut ajouter 
 
 `col` : couleur. Terme générique pour dire que ça peut être du hsv ou du rgb.
 
-`_EXACT_` : couleur de référence d'un "truc" spécifique . (Par exemple, la couleur de fond de la zone d'énigme, la couleur verte du gros opérateur '+', ...). Cette couleur de référence est comparée avec la couleur d'un pixel de l'écran. Pour que le "truc" en question soit repéré, les couleurs doivent être rigoureusement égales. TRIP: j'ai toujours trouvé le mot "rigoureusement" rigoureusement bizarre.
+`_EXACT_` : couleur de référence d'un "truc" spécifique . (Par exemple, la couleur de fond de la zone d'énigme, la couleur verte du gros opérateur '+', ...). Cette couleur de référence est comparée avec la couleur d'un pixel de l'écran. Pour que le "truc" en question soit repéré, les couleurs doivent être rigoureusement égales.
 
 `_APPROX_` : couleur de référence d'un "truc" spécifique. (Par exemple, la couleur marron-bois-moche délimitant l'extérieur de la zone de jeu). Pour que le "truc" en question soit repéré, la couleur de référence et la couleur d'un pixel de l'écran doivent être à peu près égales. On autorise un certain écart (prédéfini). 
 
@@ -236,7 +240,7 @@ Pour les branques qui ne connaissent pas la syntaxe du python : il faut ajouter 
 
 `enigma_text_complete` : texte complet de l'énigme, sans caractère inconnus.
 
-`answer` : string. La réponse de l'énigme, que le script doit trouver automatiquement.
+`answer` : string. La réponse de l'énigme, que le script doit trouver et afficher.
 
 `msg` : envoi de message sur la sortie standard, dont l'utilisateur a vraiment besoin.
 
@@ -254,25 +258,25 @@ Pour les branques qui ne connaissent pas la syntaxe du python : il faut ajouter 
 
 `pattern` : ligne ou colonne de pixel, correspondant à un motif précis. Par exemple : "un ou plusieurs pixels rouge, puis 10 pixels verts, puis éventuellement un pixel violet".
 
-`cursor` : une coordonnée x ou y, qu'on fait avancer, pour vérifier ou chercher des trucs dans des pixels.
+`cursor` : une coordonnée x ou y, qu'on fait avancer, pour vérifier où chercher des trucs dans des pixels.
 
 `cur` : valeur courante. Une valeur qu'on fait avancer dans une boucle.
 
-`crop` : rognage. Action de supprimer une ligne ou une colonne située au bord d'une image, parce qu'elle n'est pas intéressante.
+`crop` : rognage. Action de supprimer une ligne ou une colonne située au bord d'une image, parce que y'a rien dedans de ce qu'on veut garder.
 
 `ink` ou `inks` : une valeur d'encre d'un pixel, ou les valeurs d'encres d'un tableau de pixel.
 
-`array_inks` : tableau 2D des encres d'un symbole, rangés comme il faut. C'est une liste. Chaque élément est une sous-liste. Chaque sous-liste représente une ligne de valeur d'encre.
+`array_inks` : tableau 2D des encres d'un symbole, rangées comme il faut. C'est une liste. Chaque élément est une sous-liste. Chaque sous-liste représente une ligne de valeur d'encre.
 
 `raw_symbol` : tableau 2D des encres d'un symbole. Il peut y avoir, dans une ou plusieurs lignes du début, et dans une ou plusieurs lignes de la fin, des valeurs d'encres toutes à zéro.
 
 `columord_symb`: "column-ordered symbol". tableau 2D des encres d'un symbole, rangés par colonne. (c'est comme ça qu'on récupère les symboles au départ, car on analyse la zone d'énigme colonne par colonne). C'est une liste. Chaque élément est une sous-liste. Chaque sous-liste représente une **colonne** de valeur d'encre. Un tableau columord_symb est "raw", et non pas "affiné". C'est à dire que des lignes du haut et du bas peuvent avoir des valeurs d'encres toutes à zéro. Mais c'est difficilement détectable en l'état, puisque c'est rangé par colonne.
 
-`flat_list_ink` : grande liste (en une dimension) des valeurs d'encres d'un symbole. Correspond à array_inks, sauf que toutes les valeurs sont mises bout à bout. Une variable flat_list_ink ne permet pas de connaître les dimensions (largeur, hauteur) d'un symbole. Il faut avoir stocké ces infos autre part.
+`flat_list_ink` : grande liste 1D des valeurs d'encres d'un symbole. Correspond à array_inks, sauf que toutes les valeurs sont mises bout à bout. Une variable flat_list_ink ne permet pas de connaître les dimensions (largeur, hauteur) d'un symbole. Il faut avoir stocké ces infos autre part.
 
 `sig`, `signifiance` : string de un seul caractère, représentant ce que signifie un symbole. C'est ce qui permet de passer d'une liste de symbole au texte d'une énigme.
 
-`saved_data` : grande string, contenant les informations permettant de sauvegarder un symbole. Chaque élément de LIST_SYMB_ALARRACHE est une saved_data. Une saved_data contient plusieurs sous-élément (le séparateur est le caractère espace). On trouve, dans cet ordre : 
+`saved_data` : grande string, contenant les informations permettant de sauvegarder un symbole. Chaque élément de LIST_SYMB_ALARRACHE est une saved_data. Une saved_data contient plusieurs sous-élément (le séparateur est le caractère espace). On y trouve, dans cet ordre : 
  - la signifiance (un caractère)
  - la largeur et la hauteur du symbole. (deux valeurs numériques, converties en string).
  - la flat_list_ink du symbole. (plusieurs valeurs numériques, converties en string).
@@ -287,7 +291,7 @@ Pour les branques qui ne connaissent pas la syntaxe du python : il faut ajouter 
 
 `comparrison` : type d'énigme, pour laquelle il faut comparer deux valeurs numériques (en faisant plus ou moins de calcul intermédiaire). Par exemple : *12+3 ? 28/2*. Il faut trouver si 12+3 est plus grand, égal ou plus petit que 28/2.
 
-`find_operator` : type d'énigme, pour laquelle il faut trouver l'opérateur manquant, afin de vérifier l'égalité mentionnée. Par exemple : *3 ? 2 = 6*. Il faut trouver quelle égalité est vraie, parmi les 4 possibilités : *3 + 2 = 6*, *3 - 2 = 6*, *3 * 2 = 6*, *3 / 2 = 6*.
+`find_operator` : type d'énigme, pour laquelle il faut trouver l'opérateur manquant, afin de vérifier l'égalité mentionnée. Par exemple : *3 ? 2 = 6*. Il faut trouver quelle égalité est vraie, parmi les 4 possibilités : *3 + 2 = 6* ; *3 - 2 = 6* ; *3 * 2 = 6* ; *3 / 2 = 6*.
 
 `_enigma_part` : string. morceau de texte d'énigme, contenant une opération mathématique que l'on peut calculer immédiatement. Une _enigma_part ne doit contenir que des chiffres, des parenthèses et les 4 opérations. Elle ne doit pas contenir de signe égal ou de point d'interrogation.
 

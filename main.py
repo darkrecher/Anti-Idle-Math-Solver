@@ -20,6 +20,7 @@ from imganaly.symbextr import SymbolExtractor
 from imganaly.symbol import Symbol
 from imganaly.eniocr import EnigmaOcr
 from enisolvr.enisolvr import EnigmaSolver
+# TRIP: j'ai toujours trouvé le mot "rigoureusement" rigoureusement bizarre.
 
 def main():
 

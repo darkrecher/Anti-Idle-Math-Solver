@@ -20,7 +20,7 @@ Le script ne clique pas de lui-même sur la bonne réponse. Ceci pour plusieurs 
 
  - Je sais pas le faire et j'ai la flemme de chercher.
  
- - Il vaut mieux que les actions sur le jeu restent effectuées par un humain. Si c'est automatique, le jeu pourrait détecter une éventuelle tricherie. (Par exemple, si les clics sont faits à intervalle réguliers, ou toujours aux mêmes positions).
+ - Il vaut mieux que les actions sur le jeu restent effectuées par un humain. Si c'est automatique, le jeu pourrait détecter une éventuelle tricherie. (Par exemple, les clics sont faits à intervalle réguliers, ou toujours aux mêmes positions).
  
 # Comment installer et utiliser le script ? #
 
@@ -58,7 +58,7 @@ Ceci étant dit, place aux étapes :
  
 ![Example question](https://raw.github.com/darkrecher/Anti-Idle-Math-Solver/master/doc_img_readme/screenshot-question.png)
  
- - Vous verrez apparaître dans la console le texte : *!!/!!! Saisissez la question posee par le jeu :* . Cela signifie que le script a repéré 2 symboles inconnus (représenté par les 2 premiers points d'exclamation), puis le signe "/", puis 3 autres symboles inconnus. 
+ - Vous verrez apparaître, dans la console, le texte : *!!/!!! Saisissez la question posee par le jeu :* . Cela signifie que le script a repéré 2 symboles inconnus (représentés par les 2 premiers points d'exclamation), puis le signe "/", puis 3 autres symboles inconnus. 
  
  - Saisissez le texte *98/7=?* dans la console. Le script vous donnera la réponse, que vous pourrez alors sélectionner dans le jeu.
  
@@ -68,15 +68,15 @@ Ceci étant dit, place aux étapes :
  
  - Copier-collez ces infos dans le fichier symbdata.py. Chaque ligne doit constituer un élément du tuple "LIST_SYMB_ALARRACHE". Si vous ne connaissez pas la syntaxe du python, inspirez-vous du fichier symbdata.py initial, et surtout, débrouillez-vous.
  
- - Relancez une partie de Math Master, et refaites de même. (Oui, c'est SUPER chiant, et vous allez gâcher quelques parties au début).
+ - Relancez une partie de Math Master, et refaites de même. (Oui, c'est SUPER chiant, et au début vous allez gâcher quelques parties).
  
- - Au fur et à mesure que le script apprend les symboles, il y aura de moins en moins de points d'exclamation, et de plus en plus de caractères connus. Vous pouvez saisir uniquement les symboles inconnus. Par exemple, si le script vous demande : *(19+13!/2?!6* , indiquez juste les deux caractères *)1*, ça lui suffit, et il parviendra à reconstituer la question : *(19+13)/2?16* .
+ - Au fur et à mesure que le script apprend les symboles, il y aura de moins en moins de points d'exclamation, et de plus en plus de caractères connus. Vous pouvez saisir uniquement les inconnus. Par exemple, si le script vous demande : *(19+13!/2?!6* , indiquez juste les deux caractères *)1*, ça lui suffit, et il parviendra à reconstituer la question : *(19+13)/2?16* .
  
  - Les points d'interrogation indiqués dans la console correspondent directement aux points d'interrogations dans le jeu. Ce sont les points d'exclamation qui indiquent les symboles à définir. Oui c'est pas clair, je sais.
  
  - Certains caractères devront être indiqués et sauvegardés plusieurs fois, car le jeu a plusieurs façons de les écrire. Dès qu'un micro-poil de cul de pixel change, le script ne reconnaît pas le symbole et vous le redemande. 
  
- - Au bout d'un moment, on finit par y arriver. Lorsque le jeu pose une question, dont tous les symboles sont connus, la réponse s'affiche immédiatement dans la console. Cette réponse peut être une valeur numérique, un opérateur / * - +, ou un signe de comparaison < = >. 
+ - Au bout d'un moment, on finit par y arriver. Lorsque le jeu pose une question dont tous les symboles sont connus, la réponse s'affiche immédiatement dans la console. Cette réponse peut être une valeur numérique, un opérateur / * - +, ou un signe de comparaison < = >. 
  
  - Cliquer sur la bonne réponse dans le jeu, continuez ainsi au fur et à mesure des questions, et gavez-vous !
  
@@ -90,7 +90,7 @@ Dans les deux cas suivants :
  
  - Le script a reconnu tous les symboles, mais ça a donné une énigme sans aucun sens. Cela peut arriver si les définitions de symboles sont incorrectes. (Par exemple, le dessin d'un "5" est identifié comme le caractère "/").
  
-Dans ce cas, le script indique en sortie : "resolution de l'enigme : fail", et reste bloqué. Il ne demande pas de nouvelle saisie. L'utilisateur n'a pas d'autre choix que de trouver la réponse avec son propre cerveau. 
+Le script indiquera en sortie : *resolution de l'enigme : fail*, et restera bloqué. Il ne demandera pas de nouvelle saisie. L'utilisateur n'a pas d'autre choix que de trouver la réponse avec son propre cerveau. 
 
 Lorsque l'énigme suivante s'affiche à l'écran, le script se débloque et continue comme si rien de terrible ne s'était passé.
 
@@ -98,9 +98,9 @@ Lorsque l'énigme suivante s'affiche à l'écran, le script se débloque et cont
 
 Supposons que les symboles aient des hauteurs vraiment disparates. Par exemple, le "8" fait 20 pixel de haut, tous les autres symboles font 15 maximum.
 
-Si la première énigme posée ne comporte pas de 8, le script croira que la zone d'énigme fait 15 de haut. Et si il y a un ou plusieurs 8 dans les énigmes suivantes, ils ne seront pas détectés.
+Si la première énigme posée ne comporte pas de "8", le script croira que la zone d'énigme fait 15 pixels de haut. Et si il y a un ou plusieurs "8" dans les énigmes suivantes, ils ne seront pas détectés.
 
-C'est un bug "qui n'est pas censé arriver". Tous les symboles de chiffres ont la même hauteur. Et tous les autres symboles sont soit plus petits, soit de hauteur égales. Et il y a toujours au moins un chiffre quel que soit l'énigme.
+C'est un bug "qui n'est pas censé arriver". Tous les symboles de chiffres ont la même hauteur. Et tous les autres symboles sont soit plus petits, soit de hauteur égales. Et il y a toujours au moins un chiffre dans une énigme.
 
 ## Cafouillage sur les couleurs du gros opérateur ##
 
