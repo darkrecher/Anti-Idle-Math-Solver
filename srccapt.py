@@ -24,6 +24,9 @@ import wx
 
 # TODO : mettre le bazar d'init de wx ici ?
 # TODO : factoriser ces 2 fonctions de merde. 
+# TODO : bien joué le nom du fichier. Ça aurait dû être scrcapt.py.
+# Nos sympathiques lecteurs auront corrigé d'eux-mêmes. Ou se seront contentés
+# de rire bruyamment.
 
 def capture_screen(
     screen, 
