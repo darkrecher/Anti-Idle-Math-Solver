@@ -125,7 +125,7 @@ symbref.SymbolReferences.add_reference va logger le texte :
 "Demande d'ajout d'un symbole existant mais pas pareil"
 
 Et si le joueur répond une méga-connerie, par exemple : "44", alors ça va 
-pourrir la bibliothèque de symbole. Mais là on peut rien pour lui. Si il sait
+pourrir la bibliothèque de symbole. Mais là on peut rien pour lui. S'il sait
 pas lire...
 """
 
