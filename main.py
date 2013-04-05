@@ -6,7 +6,7 @@ https://github.com/darkrecher/Anti-Idle-Math-Solver
 je prends les bitcoins : 12wF4PWLeVAoaU1ozD1cnQprSiKr6dYW1G
 
 Fichier de code principal de Anti-Idle Math Solver.
-Pour une description détaillée de ce que fait ce script, voir fichier
+Pour une description détaillée de ce que fait ce script, voir le fichier
 doc_conception.md dans le repository sus-cité.
 """
 
