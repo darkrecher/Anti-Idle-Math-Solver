@@ -1,1 +1,10 @@
-﻿__all__ = [    "colrtool",    "eniocr",    "enizodtc",    "gamedtc",    "symbdata",    "symbextr",    "symbol",    "symbref",]
+﻿__all__ = [
+    "colrtool",
+    "eniocr",
+    "enizodtc",
+    "gamedtc",
+    "symbdata",
+    "symbextr",
+    "symbol",
+    "symbref",
+]
