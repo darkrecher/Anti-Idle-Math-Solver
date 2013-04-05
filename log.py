@@ -9,6 +9,7 @@ Module dégueux pour faire du log comme si on était un pro, alors qu'en fait
 c'est juste des prints de gros sale.
 
 TRIP: à la mode de quand ?
+TRIP: au lit.
 """
 
 # TODO : utiliser logging.
