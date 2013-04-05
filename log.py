@@ -5,7 +5,7 @@ créé par Réchèr. Licence CC-BY ou Art Libre.
 https://github.com/darkrecher/Anti-Idle-Math-Solver
 je prends les bitcoins : 12wF4PWLeVAoaU1ozD1cnQprSiKr6dYW1G
 
-Module dégueux pour faire du log comme si on était un pro, alors qu'on fait
+Module dégueux pour faire du log comme si on était un pro, alors qu'en fait
 c'est juste des prints de gros sale.
 """
 
