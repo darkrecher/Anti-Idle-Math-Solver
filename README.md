@@ -1,4 +1,6 @@
-﻿# Anti-Idle Math Solver #
+﻿* Edit 2013-12-14 : * Ce script ne fonctionne plus depuis la version 1,652 de Anti-Idle. Ce serait assez simple à corriger, il suffit de mettre à jour les définitions de couleurs. Si vous voulez que je le fasse, envoyez un message ou un signalement de bug. En attendant, j'ai la flemme de le faire.
+
+# Anti-Idle Math Solver #
 
 Ceci est un espèce de script pour avoir des gros scores au sous-jeu "Math Master", du jeu Flash "Anti-Idle", jouable sur Kongregate. (http://www.kongregate.com/games/Tukkun/anti-idle-the-game)
 
@@ -112,4 +114,8 @@ Pour une description détaillée du code, des algorithmes, et des bidouillages e
 
 Bon courage et amusez-vous bien ! Prochaine étape : un script d'assistance au jeu de pêche (J'y suis également une grosse tanche, ce qui est assez ironique pour un jeu de pêche).
 
-Le code et cette doc sont sous licence Creative Commons CC-BY.
+créé par Réchèr. Licence CC-BY ou Art Libre.
+Repository : https://github.com/darkrecher/Anti-Idle-Math-Solver
+Mon blog : http://recher.wordpress.com
+
+Le code et cette doc sont sous la double licence : Art Libre ou Creative Commons CC-BY (au choix).
