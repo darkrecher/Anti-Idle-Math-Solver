@@ -1,4 +1,4 @@
-﻿* Edit 2013-12-14 : * Ce script ne fonctionne plus depuis la version 1,652 de Anti-Idle. Ce serait assez simple à corriger, il suffit de mettre à jour les définitions de couleurs. Si vous voulez que je le fasse, envoyez un message ou un signalement de bug. En attendant, j'ai la flemme de le faire.
+﻿*Edit 2013-12-14:* Ce script ne fonctionne plus depuis la version 1,652 de Anti-Idle. Ce serait assez simple à corriger, il suffit de mettre à jour les définitions de couleurs. Si vous voulez que je le fasse, envoyez un message ou un signalement de bug. En attendant, j'ai la flemme de le faire.
 
 # Anti-Idle Math Solver #
 
